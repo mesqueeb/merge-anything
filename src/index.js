@@ -1,14 +1,5 @@
-# Merge anything 🥡
+import { isObject } from 'is-what'
 
-```
-npm i merge-anything
-```
-
-Merge two objects recursively. A simple & small integration.
-
-It's literally just going through an object recursively like so:
-
-```js
 function mergeRecursively (origin, newComer) {
   if (!isObject(newComer)) return newComer
   // define newObject to merge all values upon
@@ -39,4 +30,16 @@ function mergeRecursively (origin, newComer) {
       return carry
     }, newObject)
 }
-```
+
+/**
+ * Merge anything
+ *
+ * @param {object} origin the default values
+ * @param {object} newComer on which to set the default values
+ */
+export default function (origin, newComer) {
+  if (!isObject(origin)) console.error('Trying to merge target:', newComer, 'onto a non-object:', origin)
+  if (!isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', origin)
+  return mergeRecursively(origin, newComer)
+  // return merge(origin, newComer)
+}
