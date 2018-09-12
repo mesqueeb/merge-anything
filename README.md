@@ -12,7 +12,7 @@ I created this package because I tried a lot of similar packages that do merging
 
 ## Usage
 
-Pass the base param first and then an unlimited amount of
+Pass the base param first and then an unlimited amount of params to merge onto it.
 
 ```js
 import merge from 'merge-anything'
