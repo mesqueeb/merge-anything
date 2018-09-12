@@ -40,10 +40,16 @@ function mergeRecursively(origin, newComer) {
  */
 
 
-function index (origin, newComer) {
-  if (!isWhat.isObject(origin)) console.error('Trying to merge target:', newComer, 'onto a non-object:', origin);
-  if (!isWhat.isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', origin);
-  return mergeRecursively(origin, newComer); // return merge(origin, newComer)
+function index (origin) {
+  for (var _len = arguments.length, newComers = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    newComers[_key - 1] = arguments[_key];
+  }
+
+  return newComers.reduce(function (result, newComer) {
+    if (!isWhat.isObject(result)) console.error('Trying to merge target:', newComer, 'onto a non-object:', result);
+    if (!isWhat.isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', result);
+    return mergeRecursively(result, newComer);
+  }, origin);
 }
 
 exports.default = index;

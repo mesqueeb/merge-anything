@@ -6,7 +6,59 @@ npm i merge-anything
 
 Merge two objects recursively. A simple & small integration.
 
-It's literally just going through an object recursively like so:
+## Motivation
+
+I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and **none were the simple implementation I was looking for**.
+
+## Usage
+
+Pass the base param first and then an unlimited amount of
+
+```js
+import merge from 'merge-anything'
+
+const starter = {name: 'Squirtle', type: 'water'}
+const newValues = {name: 'Warturtle', level: 16}
+
+merge(starter, newValues, {is: 'cool'})
+// returns {
+//   name: 'Warturtle',
+//   type: 'water,
+//   level: 16,
+//   is: 'cool'
+// }
+```
+
+## Rules
+
+```js
+// all passed objects STAY AS IS and do not get modified
+const a = {a: 'a'}
+const b = {b: 'b'}
+const c = merge(a, b)
+// a === {a: 'a'}
+// b === {b: 'b'}
+// c === {a: 'a', b: 'b'}
+
+// arrays get overwritten
+merge({array: ['a']}, {array: ['b']}) // returns {array: ['b']}
+
+// empty objects merge into objects
+merge({obj: {prop: 'a'}}, {obj: {}}) // returns {obj: {prop: 'a'}}
+
+// but non-objects overwrite objects
+merge({obj: {prop: 'a'}}, {obj: null}) // returns {prop: null}
+merge({obj: 'a'}, 'b') // returns 'b'
+
+// and empty objects overwrite non-objects
+merge({prop: 'a'}, {prop: {}}) // returns {prop: {}}
+```
+
+It also properly keeps others special objects in-tact like dates, regex, functions etc.
+
+## Source code
+
+It is literally just going through an object recursively and assigning the values to a new object like below. However, it's wrapped to allow extra params etc.
 
 ```js
 function mergeRecursively (origin, newComer) {

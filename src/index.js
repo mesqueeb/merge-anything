@@ -37,9 +37,10 @@ function mergeRecursively (origin, newComer) {
  * @param {object} origin the default values
  * @param {object} newComer on which to set the default values
  */
-export default function (origin, newComer) {
-  if (!isObject(origin)) console.error('Trying to merge target:', newComer, 'onto a non-object:', origin)
-  if (!isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', origin)
-  return mergeRecursively(origin, newComer)
-  // return merge(origin, newComer)
+export default function (origin, ...newComers) {
+  return newComers.reduce((result, newComer) => {
+    if (!isObject(result)) console.error('Trying to merge target:', newComer, 'onto a non-object:', result)
+    if (!isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', result)
+    return mergeRecursively(result, newComer)
+  }, origin)
 }

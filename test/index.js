@@ -2,17 +2,18 @@ import test from 'ava'
 import merge from '../dist/index.cjs'
 import { isDate, isFunction } from 'is-what'
 
-test('merge-anything', t => {
+test('1. origin & target stays the same | 2. works with dates', t => {
   let res, origin, target
   const nd = new Date()
   origin = {body: 'a'}
   target = {dueDate: nd}
   res = merge(origin, target)
-  t.true(isDate(res.dueDate))
-  t.is(res.body, 'a')
+  t.deepEqual(res, {body: 'a', dueDate: nd})
   t.deepEqual(origin, {body: 'a'})
   t.deepEqual(target, {dueDate: nd})
-
+})
+test('1. works with multiple levels | 2. overwrites entire object with null', t => {
+  let res, origin, target
   origin = {
     body: '',
     head: null,
@@ -22,14 +23,18 @@ test('merge-anything', t => {
   target = {body: {}, head: {}, toes: {}, fingers: null}
   res = merge(origin, target)
   t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
-
+})
+test('overwrites string values', t => {
+  let res, origin, target
   origin = {body: 'a'}
   target = {body: 'b'}
   res = merge(origin, target)
-  t.is(res.body, 'b')
+  t.deepEqual(res, {body: 'b'})
   t.deepEqual(origin, {body: 'a'})
   t.deepEqual(target, {body: 'b'})
-
+})
+test('works with very deep props & dates', t => {
+  let res, origin, target
   const newDate = new Date()
   origin = {
     info: {
@@ -83,7 +88,9 @@ test('merge-anything', t => {
     }
   })
   t.true(isDate(res.info.newDate))
-
+})
+test('1. does not overwrite origin prop if target prop is an empty object | 2. properly merges deep props', t => {
+  let res, origin, target
   origin = {
     info: {
       time: {when: 'now'},
@@ -108,7 +115,9 @@ test('merge-anything', t => {
       }
     }
   })
-
+})
+test('overwrites any origin prop when target prop is an object with props', t => {
+  let res, origin, target
   origin = {
     body: 'a',
     body2: {head: false},
@@ -133,7 +142,9 @@ test('merge-anything', t => {
     body: {head: true},
     body2: {head: {eyes: true}},
   })
-
+})
+test('overwrites entire objects when target val is a simple string', t => {
+  let res, origin, target
   origin = {
     body: 'a',
     body2: {head: false},
@@ -147,4 +158,20 @@ test('merge-anything', t => {
     body2: {head: false},
     tail: {}
   })
+})
+test('works with unlimited depth', t => {
+  let res, origin, t1, t2, t3, t4
+  const date = new Date()
+  origin = {origin: 'a', t2: false, t3: {}, t4: 'false'}
+  t1 = {t1: date}
+  t2 = {t2: 'new'}
+  t3 = {t3: 'new'}
+  t4 = {t4: 'new', t3: {}}
+  res = merge(origin, t1, t2, t3, t4)
+  t.deepEqual(res, {origin: 'a', t1: date, t2: 'new', t3: {}, t4: 'new'})
+  t.deepEqual(origin, {origin: 'a', t2: false, t3: {}, t4: 'false'})
+  t.deepEqual(t1, {t1: date})
+  t.deepEqual(t2, {t2: 'new'})
+  t.deepEqual(t3, {t3: 'new'})
+  t.deepEqual(t4, {t4: 'new', t3: {}})
 })
