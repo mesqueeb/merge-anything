@@ -56,9 +56,35 @@ merge({prop: 'a'}, {prop: {}}) // returns {prop: {}}
 
 It also properly keeps others special objects in-tact like dates, regex, functions etc.
 
+## Extend merge rules
+
+merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.**
+
+Eg. merge-anything will overwrite arrays by default but you could change this logic to make it so it will concat the arrays.
+
+To do so your first parameter you pass has to be an object that looks like `{extensions: []}` and include an array of functions. In these functions you can change the value that will be overwriting the origin. See how to do this below:
+
+```js
+function concatArrays (originVal, newVal) {
+  if (Array.isArray(originVal) && Array.isArray(newVal)) {
+    // concat logic
+    return originVal.concat(newVal)
+  }
+  return newVal // always return newVal as fallback!!
+}
+merge(
+  {extensions: [concatArrays]}, // pass your extensions like so
+  {array: ['a']},
+  {array: ['b']}
+)
+// results in {array: ['a', 'b']}
+```
+
+Please note that each extension-function receives an `originVal` and `newVal` and **has** to return the `newVal` on fallback no matter what (in case your condition check fails or something)!
+
 ## Source code
 
-It is literally just going through an object recursively and assigning the values to a new object like below. However, it's wrapped to allow extra params etc.
+It is literally just going through an object recursively and assigning the values to a new object like below. However, it's wrapped to allow extra params etc. The code below is the basic integration, that will make you understand the basics how it works.
 
 ```js
 function mergeRecursively (origin, newComer) {
@@ -92,3 +118,5 @@ function mergeRecursively (origin, newComer) {
     }, newObject)
 }
 ```
+
+\* Of course, there are small differences with the actual source code to cope with rare cases & extra features. The actual source code is [here](https://github.com/mesqueeb/merge-anything/blob/master/src/index.js).

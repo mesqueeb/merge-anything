@@ -1,7 +1,16 @@
-import { isObject } from 'is-what'
+import { isObject, isArray } from 'is-what'
 
-function mergeRecursively (origin, newComer) {
-  if (!isObject(newComer)) return newComer
+function mergeRecursively (origin, newComer, extensions) {
+  // work directly on newComer if its not an object
+  if (!isObject(newComer)) {
+    // extend merge rules
+    if (extensions && isArray(extensions)) {
+      extensions.forEach(extend => {
+        newComer = extend(origin, newComer)
+      })
+    }
+    return newComer
+  }
   // define newObject to merge all values upon
   const newObject = (isObject(origin))
     ? Object.keys(origin)
@@ -13,10 +22,17 @@ function mergeRecursively (origin, newComer) {
     : {}
   return Object.keys(newComer)
     .reduce((carry, key) => {
-      const newVal = newComer[key]
+      // re-define the origin and newComer as targetVal and newVal
+      let newVal = newComer[key]
       const targetVal = (isObject(origin))
         ? origin[key]
         : undefined
+      // extend merge rules
+      if (extensions && isArray(extensions)) {
+        extensions.forEach(extend => {
+          newVal = extend(targetVal, newVal)
+        })
+      }
       // early return when targetVal === undefined
       if (targetVal === undefined) {
         carry[key] = newVal
@@ -36,13 +52,17 @@ function mergeRecursively (origin, newComer) {
 /**
  * Merge anything
  *
- * @param {object} origin the default values
+ * @param {object} origin the default values, OR {extensions} to pass an array of functions with extentions
  * @param {object} newComer on which to set the default values
  */
 export default function (origin, ...newComers) {
+  let extensions = null
+  let base = origin
+  if (origin['extensions'] && Object.keys(origin).length === 1) {
+    base = {}
+    extensions = origin.extensions
+  }
   return newComers.reduce((result, newComer) => {
-    if (!isObject(result)) console.error('Trying to merge target:', newComer, 'onto a non-object:', result)
-    if (!isObject(newComer)) console.error('Trying to merge a non-object:', newComer, 'onto:', result)
-    return mergeRecursively(result, newComer)
-  }, origin)
+    return mergeRecursively(result, newComer, extensions)
+  }, base)
 }

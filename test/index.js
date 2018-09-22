@@ -1,6 +1,6 @@
 import test from 'ava'
 import merge from '../dist/index.cjs'
-import { isDate, isFunction } from 'is-what'
+import { isDate, isFunction, isString, isArray } from 'is-what'
 
 test('1. origin & target stays the same | 2. works with dates', t => {
   let res, origin, target
@@ -23,6 +23,61 @@ test('1. works with multiple levels | 2. overwrites entire object with null', t 
   target = {body: {}, head: {}, toes: {}, fingers: null}
   res = merge(origin, target)
   t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
+})
+test('Overwrite arrays', t => {
+  let res, origin, target
+  origin = {array: ['a']}
+  target = {array: ['b']}
+  res = merge(origin, target)
+  t.deepEqual(res, {array: ['b']})
+})
+test('Extend conversion', t => {
+  let res, origin, target, extensions
+  function convertTimestamps (originVal, targetVal) {
+    if (
+      originVal === '%convertTimestamp%' &&
+      isString(targetVal) &&
+      isDate(new Date(targetVal))
+    ) {
+      return new Date(targetVal)
+    }
+    return targetVal
+  }
+  extensions = {
+    extensions: [convertTimestamps]
+  }
+  origin = {
+    date: '%convertTimestamp%'
+  }
+  target = {
+    date: '1990-06-22'
+  }
+  res = merge(extensions, origin, target)
+  t.deepEqual(res, {date: new Date('1990-06-22')})
+  res = merge(extensions, '%convertTimestamp%', '1990-06-22')
+  t.deepEqual(res, new Date('1990-06-22'))
+})
+test('Extend concat arrays', t => {
+  let res, origin, target, extensions
+  function concatArrays (originVal, targetVal) {
+    if (isArray(originVal) && isArray(targetVal)) {
+      return originVal.concat(targetVal)
+    }
+    return targetVal
+  }
+  extensions = {
+    extensions: [concatArrays]
+  }
+  origin = {
+    someArray: ['a']
+  }
+  target = {
+    someArray: ['b']
+  }
+  res = merge(extensions, origin, target)
+  t.deepEqual(res, {someArray: ['a', 'b']})
+  res = merge(extensions, ['a'], ['b'])
+  t.deepEqual(res, ['a', 'b'])
 })
 test('overwrites null with empty object', t => {
   let res, origin, target
