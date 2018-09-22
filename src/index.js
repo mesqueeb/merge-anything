@@ -40,7 +40,7 @@ function mergeRecursively (origin, newComer, extensions) {
       }
       // When newVal is an object do the merge recursively
       if (isObject(newVal)) {
-        carry[key] = mergeRecursively(targetVal, newVal)
+        carry[key] = mergeRecursively(targetVal, newVal, extensions)
         return carry
       }
       // all the rest

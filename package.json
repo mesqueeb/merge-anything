@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Merge two objects recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",

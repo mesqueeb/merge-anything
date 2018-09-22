@@ -42,7 +42,7 @@ function mergeRecursively(origin, newComer, extensions) {
 
 
     if (isWhat.isObject(newVal)) {
-      carry[key] = mergeRecursively(targetVal, newVal);
+      carry[key] = mergeRecursively(targetVal, newVal, extensions);
       return carry;
     } // all the rest
 

@@ -69,13 +69,16 @@ test('Extend concat arrays', t => {
     extensions: [concatArrays]
   }
   origin = {
-    someArray: ['a']
+    someArray: ['a'],
+    a: {b: {c: ['x']}}
   }
   target = {
-    someArray: ['b']
+    someArray: ['b'],
+    a: {b: {c: ['y']}}
   }
   res = merge(extensions, origin, target)
-  t.deepEqual(res, {someArray: ['a', 'b']})
+  t.deepEqual(res, {someArray: ['a', 'b'], a: {b: {c: ['x', 'y']}}})
+  // also works on base lvl
   res = merge(extensions, ['a'], ['b'])
   t.deepEqual(res, ['a', 'b'])
 })

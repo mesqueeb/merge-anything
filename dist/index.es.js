@@ -38,7 +38,7 @@ function mergeRecursively(origin, newComer, extensions) {
 
 
     if (isObject(newVal)) {
-      carry[key] = mergeRecursively(targetVal, newVal);
+      carry[key] = mergeRecursively(targetVal, newVal, extensions);
       return carry;
     } // all the rest
 
