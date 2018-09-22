@@ -14,7 +14,7 @@ function mergeRecursively(origin, newComer) {
   }, {}) : {};
   return Object.keys(newComer).reduce(function (carry, key) {
     var newVal = newComer[key];
-    var targetVal = origin[key]; // early return when targetVal === undefined
+    var targetVal = isWhat.isObject(origin) ? origin[key] : undefined; // early return when targetVal === undefined
 
     if (targetVal === undefined) {
       carry[key] = newVal;
@@ -31,7 +31,9 @@ function mergeRecursively(origin, newComer) {
     carry[key] = newVal;
     return carry;
   }, newObject);
-}
+} // let a = mergeRecursively(null, {})
+// a
+
 /**
  * Merge anything
  *

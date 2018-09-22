@@ -24,6 +24,28 @@ test('1. works with multiple levels | 2. overwrites entire object with null', t 
   res = merge(origin, target)
   t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
 })
+test('overwrites null with empty object', t => {
+  let res, origin, target
+  origin = {
+    body: null
+  }
+  target = {
+    body: {}
+  }
+  res = merge(origin, target)
+  t.deepEqual(res, {body: {}})
+})
+test('overwrites null with object with props', t => {
+  let res, origin, target
+  origin = {
+    body: null
+  }
+  target = {
+    body: {props: true}
+  }
+  res = merge(origin, target)
+  t.deepEqual(res, {body: {props: true}})
+})
 test('overwrites string values', t => {
   let res, origin, target
   origin = {body: 'a'}

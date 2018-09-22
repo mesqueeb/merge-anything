@@ -14,7 +14,9 @@ function mergeRecursively (origin, newComer) {
   return Object.keys(newComer)
     .reduce((carry, key) => {
       const newVal = newComer[key]
-      const targetVal = origin[key]
+      const targetVal = (isObject(origin))
+        ? origin[key]
+        : undefined
       // early return when targetVal === undefined
       if (targetVal === undefined) {
         carry[key] = newVal
