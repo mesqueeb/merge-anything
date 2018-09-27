@@ -1,6 +1,12 @@
 import { isObject, isArray } from 'is-what'
 
-function mergeRecursively (origin, newComer, extensions) {
+type Extension = (param1: any, param2: any) => any
+
+interface config {
+  extensions: Extension[]
+}
+
+function mergeRecursively (origin: any, newComer: any, extensions: Extension[]) {
   // work directly on newComer if its not an object
   if (!isObject(newComer)) {
     // extend merge rules
@@ -16,6 +22,7 @@ function mergeRecursively (origin, newComer, extensions) {
     ? Object.keys(origin)
       .reduce((carry, key) => {
         const targetVal = origin[key]
+        // @ts-ignore
         if (!Object.keys(newComer).includes(key)) carry[key] = targetVal
         return carry
       }, {})
@@ -50,15 +57,16 @@ function mergeRecursively (origin, newComer, extensions) {
 }
 
 /**
- * Merge anything
+ * Merge anything recursively. objects get merged, basic types overwrite objects or other basic types.
  *
- * @param {object} origin the default values, OR {extensions} to pass an array of functions with extentions
- * @param {object} newComer on which to set the default values
+ * @param {(config | any)} origin
+ * @param {...any[]} newComers
+ * @returns the result
  */
-export default function (origin, ...newComers) {
+function merge (origin: config | any, ...newComers: any[]) {
   let extensions = null
   let base = origin
-  if (origin['extensions'] && Object.keys(origin).length === 1) {
+  if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
     base = {}
     extensions = origin.extensions
   }
@@ -66,3 +74,5 @@ export default function (origin, ...newComers) {
     return mergeRecursively(result, newComer, extensions)
   }, base)
 }
+
+export default merge

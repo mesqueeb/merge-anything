@@ -4,7 +4,7 @@
 npm i merge-anything
 ```
 
-Merge two objects recursively. A simple & small integration.
+Merge objects & other types recursively. A simple & small integration.
 
 ## Motivation
 

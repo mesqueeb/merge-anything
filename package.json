@@ -1,9 +1,10 @@
 {
   "name": "merge-anything",
-  "version": "2.0.1",
-  "description": "Merge two objects recursively. A simple & small integration.",
+  "version": "2.1.0",
+  "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.esm.js",
+  "typings": "types/index.d.ts",
   "scripts": {
     "test": "ava",
     "build": "rollup -c build/rollup.js && npm run test"
@@ -25,17 +26,12 @@
   },
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
     "ava": "1.0.0-beta.8",
     "rollup": "^0.65.2",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.1.6",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^2.0.2"
+    "rollup-plugin-typescript2": "^0.17.0",
+    "typescript": "^3.0.3"
   },
   "dependencies": {
-    "is-what": "^2.0.2"
+    "is-what": "^2.1.0"
   }
 }
