@@ -1,6 +1,11 @@
 import test from 'ava'
 import merge from '../dist/index.cjs'
-import { isDate, isFunction, isString, isArray } from 'is-what'
+import { isDate, isFunction, isString, isArray, isObject } from 'is-what'
+
+function cloneFn (originVal, targetVal) {
+  if (isObject(targetVal)) return JSON.parse(JSON.stringify(targetVal))
+  return targetVal
+}
 
 test('1. origin & target stays the same | 2. works with dates', t => {
   let res, origin, target
@@ -14,15 +19,63 @@ test('1. origin & target stays the same | 2. works with dates', t => {
 })
 test('1. works with multiple levels | 2. overwrites entire object with null', t => {
   let res, origin, target
-  origin = {
-    body: '',
-    head: null,
-    toes: {big: true},
-    fingers: {'12': false}
-  }
+  origin = {body: '', head: null, toes: {big: true}, fingers: {'12': false}}
   target = {body: {}, head: {}, toes: {}, fingers: null}
   res = merge(origin, target)
   t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
+})
+test('origin and target are not modified', t => {
+  let res, origin, target
+  origin = {body: '', head: null, toes: {big: true}, fingers: {'12': false}}
+  target = {body: {}, head: {}, toes: {}, fingers: null}
+  res = merge(origin, target)
+  t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
+  t.deepEqual(origin, {body: '', head: null, toes: {big: true}, fingers: {'12': false}})
+  t.deepEqual(target, {body: {}, head: {}, toes: {}, fingers: null})
+  origin.body = 'a'
+  origin.head = 'a'
+  origin.toes.big = 'a'
+  origin.fingers['12'] = 'a'
+  target.body = 'b'
+  target.head = 'b'
+  target.toes = 'b'
+  target.fingers = 'b'
+  t.deepEqual(res, {body: {}, head: {}, toes: {big: true}, fingers: null})
+  t.deepEqual(origin, {body: 'a', head: 'a', toes: {big: 'a'}, fingers: {'12': 'a'}})
+  t.deepEqual(target, {body: 'b', head: 'b', toes: 'b', fingers: 'b'})
+})
+test('origin and target are not modified - with completely different props', t => {
+  let res, origin, target
+  // extend to clone vals
+  origin = {body: '', head: null, toes: {big: true}, fingers: {'12': false}}
+  target = {a: 'a', b: 'b', c: {d: {e: 'e'}}}
+  res = merge({extensions: [cloneFn]}, origin, target)
+  t.deepEqual(res, {body: '', head: null, toes: {big: true}, fingers: {'12': false}, a: 'a', b: 'b', c: {d: {e: 'e'}}})
+  t.deepEqual(origin, {body: '', head: null, toes: {big: true}, fingers: {'12': false}})
+  t.deepEqual(target, {a: 'a', b: 'b', c: {d: {e: 'e'}}})
+  origin.body = 'a'
+  origin.head = 'a'
+  origin.toes.big = 'a'
+  origin.fingers['12'] = 'a'
+  target.a = 'x'
+  target.b = 'x'
+  target.c.d.e = 'x'
+  t.deepEqual(origin, {body: 'a', head: 'a', toes: {big: 'a'}, fingers: {'12': 'a'}})
+  t.deepEqual(target, {a: 'x', b: 'x', c: {d: {e: 'x'}}})
+  t.deepEqual(res, {body: '', head: null, toes: {big: true}, fingers: {'12': false}, a: 'a', b: 'b', c: {d: {e: 'e'}}})
+})
+test('Clone Objects', t => {
+  let clone, origin, target
+  origin = {body: '', head: null, toes: {big: true}, fingers: {'12': false}}
+  clone = merge({extensions: [cloneFn]}, origin)
+  t.deepEqual(clone, {body: '', head: null, toes: {big: true}, fingers: {'12': false}})
+  t.deepEqual(origin, {body: '', head: null, toes: {big: true}, fingers: {'12': false}})
+  origin.body = 'a'
+  origin.head = 'a'
+  origin.toes.big = 'a'
+  origin.fingers['12'] = 'a'
+  t.deepEqual(clone, {body: '', head: null, toes: {big: true}, fingers: {'12': false}})
+  t.deepEqual(origin, {body: 'a', head: 'a', toes: {big: 'a'}, fingers: {'12': 'a'}})
 })
 test('Overwrite arrays', t => {
   let res, origin, target
@@ -32,7 +85,7 @@ test('Overwrite arrays', t => {
   t.deepEqual(res, {array: ['b']})
 })
 test('Extend conversion', t => {
-  let res, origin, target, extensions
+  let res, origin, target
   function convertTimestamps (originVal, targetVal) {
     if (
       originVal === '%convertTimestamp%' &&
@@ -43,30 +96,24 @@ test('Extend conversion', t => {
     }
     return targetVal
   }
-  extensions = {
-    extensions: [convertTimestamps]
-  }
   origin = {
     date: '%convertTimestamp%'
   }
   target = {
     date: '1990-06-22'
   }
-  res = merge(extensions, origin, target)
+  res = merge({extensions: [convertTimestamps]}, origin, target)
   t.deepEqual(res, {date: new Date('1990-06-22')})
-  res = merge(extensions, '%convertTimestamp%', '1990-06-22')
+  res = merge({extensions: [convertTimestamps]}, '%convertTimestamp%', '1990-06-22')
   t.deepEqual(res, new Date('1990-06-22'))
 })
 test('Extend concat arrays', t => {
-  let res, origin, target, extensions
+  let res, origin, target
   function concatArrays (originVal, targetVal) {
     if (isArray(originVal) && isArray(targetVal)) {
       return originVal.concat(targetVal)
     }
     return targetVal
-  }
-  extensions = {
-    extensions: [concatArrays]
   }
   origin = {
     someArray: ['a'],
@@ -76,10 +123,10 @@ test('Extend concat arrays', t => {
     someArray: ['b'],
     a: {b: {c: ['y']}}
   }
-  res = merge(extensions, origin, target)
+  res = merge({extensions: [concatArrays]}, origin, target)
   t.deepEqual(res, {someArray: ['a', 'b'], a: {b: {c: ['x', 'y']}}})
   // also works on base lvl
-  res = merge(extensions, ['a'], ['b'])
+  res = merge({extensions: [concatArrays]}, ['a'], ['b'])
   t.deepEqual(res, ['a', 'b'])
 })
 test('overwrites null with empty object', t => {

@@ -40,7 +40,6 @@ function defaults (config) {
     return Object.assign({
       sourcemap: false,
       name: className,
-      exports: 'named',
     }, output)
   })
   return Object.assign(defaults, config)

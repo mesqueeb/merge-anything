@@ -1,8 +1,11 @@
-import { isObject, isArray } from 'is-what';
+import { isArray, isObject } from 'is-what';
 
+function isObjectLike(payload) {
+    return isObject(payload);
+}
 function mergeRecursively(origin, newComer, extensions) {
     // work directly on newComer if its not an object
-    if (!isObject(newComer)) {
+    if (!isObjectLike(newComer)) {
         // extend merge rules
         if (extensions && isArray(extensions)) {
             extensions.forEach(function (extend) {
@@ -12,7 +15,7 @@ function mergeRecursively(origin, newComer, extensions) {
         return newComer;
     }
     // define newObject to merge all values upon
-    var newObject = (isObject(origin))
+    var newObject = (isObjectLike(origin))
         ? Object.keys(origin)
             .reduce(function (carry, key) {
             var targetVal = origin[key];
@@ -26,7 +29,7 @@ function mergeRecursively(origin, newComer, extensions) {
         .reduce(function (carry, key) {
         // re-define the origin and newComer as targetVal and newVal
         var newVal = newComer[key];
-        var targetVal = (isObject(origin))
+        var targetVal = (isObjectLike(origin))
             ? origin[key]
             : undefined;
         // extend merge rules
@@ -41,7 +44,7 @@ function mergeRecursively(origin, newComer, extensions) {
             return carry;
         }
         // When newVal is an object do the merge recursively
-        if (isObject(newVal)) {
+        if (isObjectLike(newVal)) {
             carry[key] = mergeRecursively(targetVal, newVal, extensions);
             return carry;
         }
@@ -53,18 +56,18 @@ function mergeRecursively(origin, newComer, extensions) {
 /**
  * Merge anything recursively. objects get merged, basic types overwrite objects or other basic types.
  *
- * @param {(config | any)} origin
+ * @param {(IConfig | any)} origin
  * @param {...any[]} newComers
  * @returns the result
  */
-function merge(origin) {
+function index (origin) {
     var newComers = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         newComers[_i - 1] = arguments[_i];
     }
     var extensions = null;
     var base = origin;
-    if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
+    if (isObjectLike(origin) && origin.extensions && Object.keys(origin).length === 1) {
         base = {};
         extensions = origin.extensions;
     }
@@ -73,4 +76,4 @@ function merge(origin) {
     }, base);
 }
 
-export default merge;
+export default index;
