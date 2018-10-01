@@ -39,6 +39,7 @@ const c = merge(a, b)
 // a === {a: 'a'}
 // b === {b: 'b'}
 // c === {a: 'a', b: 'b'}
+// However, be careful with JavaScript object references. See below: A note on JavaScript object references
 
 // arrays get overwritten
 merge({array: ['a']}, {array: ['b']}) // returns {array: ['b']}
@@ -60,6 +61,7 @@ It also properly keeps others special objects in-tact like dates, regex, functio
 
 merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.**
 
+### Concat arrays
 Eg. merge-anything will overwrite arrays by default but you could change this logic to make it so it will concat the arrays.
 
 To do so your first parameter you pass has to be an object that looks like `{extensions: []}` and include an array of functions. In these functions you can change the value that will be overwriting the origin. See how to do this below:
@@ -81,6 +83,30 @@ merge(
 ```
 
 Please note that each extension-function receives an `originVal` and `newVal` and **has** to return the `newVal` on fallback no matter what (in case your condition check fails or something)!
+
+## A note on JavaScript object references
+
+```js
+const original = {lvl1: {lvl2: 'a'}}
+const new = {}
+const merged = merge(original, merged)
+original.lvl1.lvl2 = 'b'
+// This will change the value for `original` AND `merged`!!!
+original.lvl1.lvl2 === 'b' // true
+merged.lvl1.lvl2 === 'b' // true
+```
+
+One work around would be to add the custom merge rule:
+
+```js
+function cloneFn (originVal, targetVal) {
+  if (isObject(targetVal)) return JSON.parse(JSON.stringify(targetVal))
+  return targetVal
+}
+// and do
+const merged = merge({extensions: [cloneFn]}, original, merged)
+// However, this is slow when working with large sets of data!
+```
 
 ## Source code
 
