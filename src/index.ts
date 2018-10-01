@@ -12,7 +12,7 @@ function isObjectLike<T extends object>(payload: any): payload is T {
 
 function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
   // work directly on newComer if its not an object
-  if (!isObjectLike(newComer)) {
+  if (!isObject(newComer)) {
     // extend merge rules
     if (extensions && isArray(extensions)) {
       extensions.forEach(extend => {
@@ -22,7 +22,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
     return newComer
   }
   // define newObject to merge all values upon
-  const newObject = (isObjectLike(origin))
+  const newObject = (isObject(origin))
     ? Object.keys(origin)
       .reduce((carry, key) => {
         const targetVal = origin[key]
@@ -35,7 +35,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
     .reduce((carry, key) => {
       // re-define the origin and newComer as targetVal and newVal
       let newVal = newComer[key]
-      const targetVal = (isObjectLike(origin))
+      const targetVal = (isObject(origin))
         ? origin[key]
         : undefined
       // extend merge rules
@@ -50,7 +50,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
         return carry
       }
       // When newVal is an object do the merge recursively
-      if (isObjectLike(newVal)) {
+      if (isObject(newVal)) {
         carry[key] = mergeRecursively(targetVal, newVal, extensions)
         return carry
       }
