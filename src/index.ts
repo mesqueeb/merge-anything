@@ -6,10 +6,6 @@ interface IConfig {
   extensions: Extension[]
 }
 
-function isObjectLike<T extends object>(payload: any): payload is T {
-  return isObject(payload)
-}
-
 function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
   // work directly on newComer if its not an object
   if (!isObject(newComer)) {
@@ -70,7 +66,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
 export default function (origin: IConfig | any, ...newComers: any[]) {
   let extensions = null
   let base = origin
-  if (isObjectLike<IConfig>(origin) && origin.extensions && Object.keys(origin).length === 1) {
+  if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
     base = {}
     extensions = origin.extensions
   }

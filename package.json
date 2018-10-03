@@ -36,6 +36,6 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "is-what": "^2.3.0"
+    "is-what": "^2.5.0"
   }
 }
