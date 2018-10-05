@@ -1,8 +1,5 @@
 import { isArray, isObject } from 'is-what';
 
-function isObjectLike(payload) {
-    return isObject(payload);
-}
 function mergeRecursively(origin, newComer, extensions) {
     // work directly on newComer if its not an object
     if (!isObject(newComer)) {
@@ -54,7 +51,9 @@ function mergeRecursively(origin, newComer, extensions) {
     }, newObject);
 }
 /**
- * Merge anything recursively. objects get merged, basic types overwrite objects or other basic types.
+ * Merge anything recursively.
+ * Objects get merged, special objects (classes etc.) are re-assigned "as is".
+ * Basic types overwrite objects or other basic types.
  *
  * @param {(IConfig | any)} origin
  * @param {...any[]} newComers
@@ -67,7 +66,7 @@ function index (origin) {
     }
     var extensions = null;
     var base = origin;
-    if (isObjectLike(origin) && origin.extensions && Object.keys(origin).length === 1) {
+    if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
         base = {};
         extensions = origin.extensions;
     }

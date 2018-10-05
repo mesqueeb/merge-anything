@@ -10,6 +10,8 @@ Merge objects & other types recursively. A simple & small integration.
 
 I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and **none were the simple implementation I was looking for**.
 
+I was mostely looking for something that **keeps special objects (like JavaScript classes) "as is"** and doesn't mess with those losing the prototypes in many cases! With merge-anything your classes are just pasted with their prototypes without problem.
+
 ## Usage
 
 Pass the base param first and then an unlimited amount of params to merge onto it.
@@ -31,8 +33,12 @@ merge(starter, newValues, {is: 'cool'})
 
 ## Rules
 
+This package will recursively go through plain objects and merge the values onto a new object.
+
+> Please note that this package recognises special JavaScript objects like classes. In such cases it will not recursively merge them like objects, but assign the class onto the new object "as is"!
+
 ```js
-// all passed objects STAY AS IS and do not get modified
+// all passed objects do not get modified
 const a = {a: 'a'}
 const b = {b: 'b'}
 const c = merge(a, b)
