@@ -70,7 +70,7 @@ merge({array: ['a']}, {array: ['b']}) // returns {array: ['b']}
 merge({obj: {prop: 'a'}}, {obj: {}}) // returns {obj: {prop: 'a'}}
 
 // but non-objects overwrite objects
-merge({obj: {prop: 'a'}}, {obj: null}) // returns {prop: null}
+merge({obj: {prop: 'a'}}, {obj: null}) // returns {obj: null}
 merge({obj: 'a'}, 'b') // returns 'b'
 
 // and empty objects overwrite non-objects
@@ -124,10 +124,12 @@ merged.lvl1.lvl2 === 'b' // true
 It is literally just going through an object recursively and assigning the values to a new object like below. However, it's wrapped to allow extra params etc. The code below is the basic integration, that will make you understand the basics how it works.
 
 ```js
+import { isPlainObject } from 'is-what'
+
 function mergeRecursively (origin, newComer) {
-  if (!isObject(newComer)) return newComer
+  if (!isPlainObject(newComer)) return newComer
   // define newObject to merge all values upon
-  const newObject = (isObject(origin))
+  const newObject = (isPlainObject(origin))
     ? Object.keys(origin)
       .reduce((carry, key) => {
         const targetVal = origin[key]
@@ -145,7 +147,7 @@ function mergeRecursively (origin, newComer) {
         return carry
       }
       // When newVal is an object do the merge recursively
-      if (isObject(newVal)) {
+      if (isPlainObject(newVal)) {
         carry[key] = mergeRecursively(targetVal, newVal)
         return carry
       }

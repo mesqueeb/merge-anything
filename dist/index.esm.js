@@ -1,8 +1,8 @@
-import { isArray, isObject } from 'is-what';
+import { isArray, isPlainObject } from 'is-what';
 
 function mergeRecursively(origin, newComer, extensions) {
     // work directly on newComer if its not an object
-    if (!isObject(newComer)) {
+    if (!isPlainObject(newComer)) {
         // extend merge rules
         if (extensions && isArray(extensions)) {
             extensions.forEach(function (extend) {
@@ -12,7 +12,7 @@ function mergeRecursively(origin, newComer, extensions) {
         return newComer;
     }
     // define newObject to merge all values upon
-    var newObject = (isObject(origin))
+    var newObject = (isPlainObject(origin))
         ? Object.keys(origin)
             .reduce(function (carry, key) {
             var targetVal = origin[key];
@@ -26,7 +26,7 @@ function mergeRecursively(origin, newComer, extensions) {
         .reduce(function (carry, key) {
         // re-define the origin and newComer as targetVal and newVal
         var newVal = newComer[key];
-        var targetVal = (isObject(origin))
+        var targetVal = (isPlainObject(origin))
             ? origin[key]
             : undefined;
         // extend merge rules
@@ -41,7 +41,7 @@ function mergeRecursively(origin, newComer, extensions) {
             return carry;
         }
         // When newVal is an object do the merge recursively
-        if (isObject(newVal)) {
+        if (isPlainObject(newVal)) {
             carry[key] = mergeRecursively(targetVal, newVal, extensions);
             return carry;
         }
@@ -66,7 +66,7 @@ function index (origin) {
     }
     var extensions = null;
     var base = origin;
-    if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
+    if (isPlainObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
         base = {};
         extensions = origin.extensions;
     }

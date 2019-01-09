@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -19,6 +19,8 @@
     "javascript",
     "merge",
     "deepmerge",
+    "object.assign",
+    "deep assign",
     "recursively"
   ],
   "author": "Luca Ban - Mesqueeb",
@@ -37,6 +39,6 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "is-what": "^3.0.1"
+    "is-what": "^3.1.1"
   }
 }

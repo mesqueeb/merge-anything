@@ -1,4 +1,4 @@
-import { isArray, isObject } from 'is-what'
+import { isArray, isPlainObject } from 'is-what'
 
 type Extension = (param1: any, param2: any) => any
 
@@ -8,7 +8,7 @@ interface IConfig {
 
 function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
   // work directly on newComer if its not an object
-  if (!isObject(newComer)) {
+  if (!isPlainObject(newComer)) {
     // extend merge rules
     if (extensions && isArray(extensions)) {
       extensions.forEach(extend => {
@@ -18,7 +18,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
     return newComer
   }
   // define newObject to merge all values upon
-  const newObject = (isObject(origin))
+  const newObject = (isPlainObject(origin))
     ? Object.keys(origin)
       .reduce((carry, key) => {
         const targetVal = origin[key]
@@ -31,7 +31,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
     .reduce((carry, key) => {
       // re-define the origin and newComer as targetVal and newVal
       let newVal = newComer[key]
-      const targetVal = (isObject(origin))
+      const targetVal = (isPlainObject(origin))
         ? origin[key]
         : undefined
       // extend merge rules
@@ -46,7 +46,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
         return carry
       }
       // When newVal is an object do the merge recursively
-      if (isObject(newVal)) {
+      if (isPlainObject(newVal)) {
         carry[key] = mergeRecursively(targetVal, newVal, extensions)
         return carry
       }
@@ -68,7 +68,7 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
 export default function (origin: IConfig | any, ...newComers: any[]) {
   let extensions = null
   let base = origin
-  if (isObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
+  if (isPlainObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
     base = {}
     extensions = origin.extensions
   }
