@@ -16,11 +16,11 @@ I was looking for:
 - supports merging of nested properties
 - **does not break special class instances**　‼️
 
-This last one is crucial! In JavaScript almost everything is _an object_, sure, but I don't want a merge function trying to merge eg. two `new Date()` instances! So many libraries use custom classes that create objects with special prototypes, and they all break trying when trying to merge them. So we gotta be careful!
+This last one is crucial! In JavaScript almost everything is _an object_, sure, but I don't want a merge function trying to merge eg. two `new Date()` instances! So many libraries use custom classes that create objects with special prototypes, and such objects all break when trying to merge them. So we gotta be careful!
 
-merge-anything will merge objects with nested properties but only "plain objects". As soon as a sub-prop is not a "plain object" and has a special prototype, it will copy that instance over "as is". ♻️
+merge-anything will merge objects and nested properties, but only as long as they're "plain objects". As soon as a sub-prop is not a "plain object" and has a special prototype, it will copy that instance over "as is". ♻️
 
-## Meet the anything family
+## Meet the family
 
 - [merge-anything](https://github.com/mesqueeb/merge-anything)
 - [filter-anything](https://github.com/mesqueeb/filter-anything)
@@ -117,18 +117,6 @@ original.lvl1.lvl2 = 'b'
 // This will change the value for `original` AND `merged`!!!
 original.lvl1.lvl2 === 'b' // true
 merged.lvl1.lvl2 === 'b' // true
-```
-
-One work around would be to add the custom merge rule:
-
-```js
-function cloneFn (originVal, targetVal) {
-  if (isObject(targetVal)) return JSON.parse(JSON.stringify(targetVal))
-  return targetVal
-}
-// and do
-const merged = merge({extensions: [cloneFn]}, original, merged)
-// However, this is slow when working with large sets of data!
 ```
 
 ## Source code
