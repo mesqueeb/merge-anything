@@ -7,7 +7,8 @@
   "typings": "types/index.d.ts",
   "scripts": {
     "test": "ava",
-    "build": "rollup -c build/rollup.js && npm run test"
+    "rollup": "rollup -c build/rollup.js",
+    "build": "npm run rollup && npm run test"
   },
   "repository": {
     "type": "git",

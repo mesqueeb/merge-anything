@@ -8,9 +8,25 @@ Merge objects & other types recursively. A simple & small integration.
 
 ## Motivation
 
-I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and **none were the simple implementation I was looking for**.
+I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and *all of them break things they are not supposed to break*... 😞
 
-I was mostely looking for something that **keeps special objects (like JavaScript classes) "as is"** and doesn't mess with those losing the prototypes in many cases! With merge-anything your classes are just pasted with their prototypes without problem.
+I was looking for:
+
+- a simple merge function like `Object.assign()`
+- supports merging of nested properties
+- **does not break special class instances**　‼️
+
+This last one is crucial! In JavaScript almost everything is _an object_, sure, but I don't want a merge function trying to merge eg. two `new Date()` instances! So many libraries use custom classes that create objects with special prototypes, and they all break trying when trying to merge them. So we gotta be careful!
+
+merge-anything will merge objects with nested properties but only "plain objects". As soon as a sub-prop is not a "plain object" and has a special prototype, it will copy that instance over "as is". ♻️
+
+## Meet the anything family
+
+- [merge-anything](https://github.com/mesqueeb/merge-anything)
+- [filter-anything](https://github.com/mesqueeb/filter-anything)
+- [find-and-replace-anything](https://github.com/mesqueeb/find-and-replace-anything)
+- copy-anything (WIP)
+- [is-what](https://github.com/mesqueeb/is-what)
 
 ## Usage
 
@@ -20,11 +36,11 @@ Pass the base param first and then an unlimited amount of params to merge onto i
 import merge from 'merge-anything'
 
 const starter = {name: 'Squirtle', type: 'water'}
-const newValues = {name: 'Warturtle', level: 16}
+const newValues = {name: 'Wartortle', level: 16}
 
 merge(starter, newValues, {is: 'cool'})
 // returns {
-//   name: 'Warturtle',
+//   name: 'Wartortle',
 //   type: 'water,
 //   level: 16,
 //   is: 'cool'
@@ -68,6 +84,7 @@ It also properly keeps others special objects in-tact like dates, regex, functio
 merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.**
 
 ### Concat arrays
+
 Eg. merge-anything will overwrite arrays by default but you could change this logic to make it so it will concat the arrays.
 
 To do so your first parameter you pass has to be an object that looks like `{extensions: []}` and include an array of functions. In these functions you can change the value that will be overwriting the origin. See how to do this below:
