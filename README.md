@@ -22,11 +22,12 @@ merge-anything will merge objects and nested properties, but only as long as the
 
 ## Meet the family
 
-- [merge-anything](https://github.com/mesqueeb/merge-anything)
-- [filter-anything](https://github.com/mesqueeb/filter-anything)
-- [find-and-replace-anything](https://github.com/mesqueeb/find-and-replace-anything)
-- copy-anything (WIP)
-- [is-what](https://github.com/mesqueeb/is-what)
+- [merge-anything 🥡](https://github.com/mesqueeb/merge-anything)
+- [filter-anything ⚔️](https://github.com/mesqueeb/filter-anything)
+- [find-and-replace-anything 🎣](https://github.com/mesqueeb/find-and-replace-anything)
+- [compare-anything 🛰](https://github.com/mesqueeb/compare-anything)
+- [copy-anything 🎭](https://github.com/mesqueeb/copy-anything)
+- [is-what 🙉](https://github.com/mesqueeb/is-what)
 
 ## Usage
 
