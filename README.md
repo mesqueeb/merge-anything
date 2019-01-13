@@ -27,6 +27,7 @@ merge-anything will merge objects and nested properties, but only as long as the
 - [find-and-replace-anything 🎣](https://github.com/mesqueeb/find-and-replace-anything)
 - [compare-anything 🛰](https://github.com/mesqueeb/compare-anything)
 - [copy-anything 🎭](https://github.com/mesqueeb/copy-anything)
+- [flatten-anything 🏏](https://github.com/mesqueeb/flatten-anything)
 - [is-what 🙉](https://github.com/mesqueeb/is-what)
 
 ## Usage
