@@ -144,7 +144,7 @@ const mergedNotReactive = copy(merged)
 
 // we change the airplane from departuring 🛫 to landing 🛬
 original.airport.airplane = '🛬'
-// `original` and `merged` are not linked anymore!
+// `original` and `mergedNotReactive` are not linked anymore!
 original.airport.airplane === '🛬' // true
 mergedNotReactive.airport.airplane === '🛫' // true
 ```
