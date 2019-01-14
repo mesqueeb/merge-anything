@@ -1065,6 +1065,13 @@ convert-to-spaces@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/convert-to-spaces/-/convert-to-spaces-1.0.2.tgz#7e3e48bbe6d997b1417ddca2868204b4d3d85715"
 
+copy-anything@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/copy-anything/-/copy-anything-1.1.0.tgz#d243475ede080b48d33821fac9a84c9c984bef2b"
+  integrity sha512-fA8D988xB27MB7Lz1h5KUDOGZRmoTsx1OYctPJCEqlD8jO+hqL6XSJiRPmvLmaxAi8zipgaQljiSmmYXTrZsIw==
+  dependencies:
+    is-what "^3.1.2"
+
 copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
@@ -1864,6 +1871,11 @@ is-what@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.1.1.tgz#3a22d7f38fc50ffa58cd29b29f0450c489afd65d"
   integrity sha512-zJfgPtIFG4G9tdJraBhkYxKF7TtSBADu7FLqV544UlzCwfZxOV5lhvRcRpcoT+C/dRf4npOaBVFRHuqD3XXqJw==
+
+is-what@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/is-what/-/is-what-3.1.2.tgz#988de1c66e43a6f26a2ee5b8a9c99fa8b91dce7d"
+  integrity sha512-Vq0dNCSDGxl7KnquuKqkVaOHOCllLn9zm7WObKckKI8F1I5ATH6erjeqhSVag0rTv4n+J8+hSGtuDaCIM2q/qA==
 
 is-windows@^1.0.2:
   version "1.0.2"

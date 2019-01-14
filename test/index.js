@@ -1,5 +1,6 @@
 import test from 'ava'
 import merge from '../dist/index.cjs'
+import copy from 'copy-anything'
 import { isDate, isFunction, isString, isArray, isObject } from 'is-what'
 
 function cloneFn (originVal, targetVal) {
@@ -16,6 +17,56 @@ test('1. origin & target stays the same | 2. works with dates', t => {
   t.deepEqual(res, {body: 'a', dueDate: nd})
   t.deepEqual(origin, {body: 'a'})
   t.deepEqual(target, {dueDate: nd})
+})
+test('adding a prop on target1|target2|mergedObj', t => {
+  let res, origin, target
+  origin = {nested: {}}
+  target = {nested: {}}
+  res = merge(origin, target)
+  t.deepEqual(res, {nested: {}})
+  origin.nested.a = ''
+  target.nested.b = ''
+  res.nested.c = ''
+  t.deepEqual(origin, {nested: {a: ''}})
+  t.deepEqual(target, {nested: {b: ''}})
+  t.deepEqual(res, {nested: {c: ''}})
+})
+test('changing a prop on target1|target2|mergedObj', t => {
+  let res, origin, target
+  // failing example
+  origin = {nested: {a: 1}}
+  target = {}
+  res = merge(origin, target)
+  t.deepEqual(res, {nested: {a: 1}})
+  origin.nested.a = 2
+  t.deepEqual(origin, {nested: {a: 2}}) // linked
+  t.deepEqual(target, {})
+  t.deepEqual(res, {nested: {a: 2}}) // linked
+  target.nested = {a: 3}
+  t.deepEqual(origin, {nested: {a: 2}}) // not changed
+  t.deepEqual(target, {nested: {a: 3}})
+  t.deepEqual(res, {nested: {a: 2}}) // not changed
+  res.nested.a = 4
+  t.deepEqual(origin, {nested: {a: 4}}) // linked
+  t.deepEqual(target, {nested: {a: 3}})
+  t.deepEqual(res, {nested: {a: 4}}) // linked
+  // working
+  origin = {nested: {a: 1}}
+  target = {}
+  res = copy(merge(origin, target))
+  t.deepEqual(res, {nested: {a: 1}})
+  origin.nested.a = 2
+  t.deepEqual(origin, {nested: {a: 2}}) // not linked
+  t.deepEqual(target, {})
+  t.deepEqual(res, {nested: {a: 1}}) // not linked
+  target.nested = {a: 3}
+  t.deepEqual(origin, {nested: {a: 2}}) // not changed
+  t.deepEqual(target, {nested: {a: 3}})
+  t.deepEqual(res, {nested: {a: 1}}) // not changed
+  res.nested.a = 4
+  t.deepEqual(origin, {nested: {a: 2}}) // not linked
+  t.deepEqual(target, {nested: {a: 3}})
+  t.deepEqual(res, {nested: {a: 4}}) // not linked
 })
 test('1. works with multiple levels | 2. overwrites entire object with null', t => {
   let res, origin, target

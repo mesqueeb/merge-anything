@@ -79,7 +79,9 @@ merge({obj: 'a'}, 'b') // returns 'b'
 merge({prop: 'a'}, {prop: {}}) // returns {prop: {}}
 ```
 
-It also properly keeps others special objects in-tact like dates, regex, functions etc.
+merge-anything properly keeps special objects intact like dates, regex, functions, class instances etc.
+
+However, it's **very important** you understand how to work around JavaScript object references. Please be sure to read [a note on JavaScript object references](#a-note-on-javascript-object-references) down below.
 
 ## Extend merge rules
 
@@ -111,14 +113,40 @@ Please note that each extension-function receives an `originVal` and `newVal` an
 
 ## A note on JavaScript object references
 
+Be careful for JavaScript object reference. Any property that's nested will be reactive and linked between the original and the merged objects! Down below we'll show how to prevent this.
+
 ```js
-const original = {lvl1: {lvl2: 'a'}}
-const new = {}
+const original = {airport: {airplane: '🛫'}}
+const new = {country: {location: 'Brussels'}}
 const merged = merge(original, merged)
-original.lvl1.lvl2 = 'b'
+
+// we change the airplane from departuring 🛫 to landing 🛬
+original.airport.airplane = '🛬'
 // This will change the value for `original` AND `merged`!!!
-original.lvl1.lvl2 === 'b' // true
-merged.lvl1.lvl2 === 'b' // true
+original.airport.airplane === '🛬' // true
+merged.airport.airplane === '🛬' // true
+```
+
+The key rule to remember is:
+
+> Any property that's nested more than 1 level without an overlapping parent property will be reactive and linked in both the merge result and the source
+
+However, **there is a really easy solution**. We can just copy the merge result to get rid of any reactivity. For this we can use the [copy-anything](https://github.com/mesqueeb/copy-anything) library. This library makes sure that special class instances do not break, so you can use it without fear of breaking stuff!
+
+See below how we integrate 'copy-anything':
+```js
+import copy from 'copy-anything'
+
+const original = {airport: {airplane: '🛫'}}
+const new = {country: {location: 'Brussels'}}
+const merged = merge(original, merged)
+const mergedNotReactive = copy(merged)
+
+// we change the airplane from departuring 🛫 to landing 🛬
+original.airport.airplane = '🛬'
+// `original` and `merged` are not linked anymore!
+original.airport.airplane === '🛬' // true
+merged.airport.airplane === '🛫' // true
 ```
 
 ## Source code
