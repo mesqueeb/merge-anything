@@ -131,7 +131,7 @@ The key rule to remember is:
 
 > Any property that's nested more than 1 level without an overlapping parent property will be reactive and linked in both the merge result and the source
 
-However, **there is a really easy solution**. We can just copy the merge result to get rid of any reactivity. For this we can use the [copy-anything](https://github.com/mesqueeb/copy-anything) library. This library makes sure that special class instances do not break, so you can use it without fear of breaking stuff!
+However, **there is a really easy solution**. We can just copy the merge result to get rid of any reactivity. For this we can use the [copy-anything](https://github.com/mesqueeb/copy-anything) library. This library also makes sure that _special class instances do not break_, so you can use it without fear of breaking stuff!
 
 See below how we integrate 'copy-anything':
 ```js
@@ -146,7 +146,7 @@ const mergedNotReactive = copy(merged)
 original.airport.airplane = '🛬'
 // `original` and `merged` are not linked anymore!
 original.airport.airplane === '🛬' // true
-merged.airport.airplane === '🛫' // true
+mergedNotReactive.airport.airplane === '🛫' // true
 ```
 
 ## Source code
