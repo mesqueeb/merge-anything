@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -47,9 +47,9 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "ava": "1.0.0-beta.8",
-    "copy-anything": "^1.1.0",
+    "copy-anything": "^1.1.1",
     "rollup": "^0.65.2",
-    "rollup-plugin-typescript2": "^0.17.0",
+    "rollup-plugin-typescript2": "^0.19.2",
     "typescript": "^3.0.3"
   },
   "dependencies": {
