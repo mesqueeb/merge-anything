@@ -14,6 +14,8 @@ I was looking for:
 
 - a simple merge function like `Object.assign()`
 - supports merging of nested properties
+- supports symbols
+- supports enumerable & nonenumerable props
 - **does not break special class instances**　‼️
 
 This last one is crucial! In JavaScript almost everything is _an object_, sure, but I don't want a merge function trying to merge eg. two `new Date()` instances! So many libraries use custom classes that create objects with special prototypes, and such objects all break when trying to merge them. So we gotta be careful!
