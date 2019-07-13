@@ -1,5 +1,20 @@
-import { isArray, isPlainObject } from 'is-what';
+import { isArray, isPlainObject, isSymbol } from 'is-what';
 
+function assignProp(carry, key, newVal, originalObject) {
+    var propType = originalObject.propertyIsEnumerable(key)
+        ? 'enumerable'
+        : 'nonenumerable';
+    if (propType === 'enumerable')
+        carry[key] = newVal;
+    if (propType === 'nonenumerable') {
+        Object.defineProperty(carry, key, {
+            value: newVal,
+            enumerable: false,
+            writable: true,
+            configurable: true
+        });
+    }
+}
 function mergeRecursively(origin, newComer, extensions) {
     // work directly on newComer if its not an object
     if (!isPlainObject(newComer)) {
@@ -12,21 +27,27 @@ function mergeRecursively(origin, newComer, extensions) {
         return newComer;
     }
     // define newObject to merge all values upon
-    var newObject = (isPlainObject(origin))
-        ? Object.keys(origin)
-            .reduce(function (carry, key) {
-            var targetVal = origin[key];
+    var newObject = {};
+    if (isPlainObject(origin)) {
+        var props_1 = Object.getOwnPropertyNames(origin);
+        var symbols_1 = Object.getOwnPropertySymbols(origin);
+        newObject = props_1.concat(symbols_1).reduce(function (carry, key) {
             // @ts-ignore
-            if (!Object.keys(newComer).includes(key))
-                carry[key] = targetVal;
+            var targetVal = origin[key];
+            if ((!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
+                (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))) {
+                assignProp(carry, key, targetVal, origin);
+            }
             return carry;
-        }, {})
-        : {};
-    return Object.keys(newComer)
-        .reduce(function (carry, key) {
+        }, {});
+    }
+    var props = Object.getOwnPropertyNames(newComer);
+    var symbols = Object.getOwnPropertySymbols(newComer);
+    var result = props.concat(symbols).reduce(function (carry, key) {
         // re-define the origin and newComer as targetVal and newVal
         var newVal = newComer[key];
         var targetVal = (isPlainObject(origin))
+            // @ts-ignore
             ? origin[key]
             : undefined;
         // extend merge rules
@@ -35,20 +56,14 @@ function mergeRecursively(origin, newComer, extensions) {
                 newVal = extend(targetVal, newVal);
             });
         }
-        // early return when targetVal === undefined
-        if (targetVal === undefined) {
-            carry[key] = newVal;
-            return carry;
-        }
         // When newVal is an object do the merge recursively
-        if (isPlainObject(newVal)) {
-            carry[key] = mergeRecursively(targetVal, newVal, extensions);
-            return carry;
+        if (targetVal !== undefined && isPlainObject(newVal)) {
+            newVal = mergeRecursively(targetVal, newVal, extensions);
         }
-        // all the rest
-        carry[key] = newVal;
+        assignProp(carry, key, newVal, newComer);
         return carry;
     }, newObject);
+    return result;
 }
 /**
  * Merge anything recursively.
@@ -59,7 +74,7 @@ function mergeRecursively(origin, newComer, extensions) {
  * @param {...any[]} newComers
  * @returns the result
  */
-function merge (origin) {
+function merge(origin) {
     var newComers = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         newComers[_i - 1] = arguments[_i];

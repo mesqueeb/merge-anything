@@ -372,11 +372,58 @@ test('works with unlimited depth', t => {
 })
 
 test('symbols as keys', t => {
+  let res, x, y
   const mySymbol = Symbol('mySymbol')
-  const x = { value: 42, [mySymbol]: 'hello' }
-  const y = { other: 33 }
-  const res = merge(x, y)
+  x = { value: 42, [mySymbol]: 'hello' }
+  y = { other: 33 }
+  res = merge(x, y)
   t.is(res.value, 42)
   t.is(res.other, 33)
   t.is(res[mySymbol], 'hello')
+  x = { value: 42 }
+  y = { other: 33, [mySymbol]: 'hello' }
+  res = merge(x, y)
+  t.is(res.value, 42)
+  t.is(res.other, 33)
+  t.is(res[mySymbol], 'hello')
+})
+
+test('nonenumerable keys', t => {
+  let x, y, res
+  const mySymbol = Symbol('mySymbol')
+  x = { value: 42 }
+  y = { other: 33 }
+  Object.defineProperty(x, 'xid', {
+    value: 1,
+    writable: true,
+    enumerable: false,
+    configurable: true
+  })
+  Object.defineProperty(x, mySymbol, {
+    value: 'original',
+    writable: true,
+    enumerable: false,
+    configurable: true
+  })
+  Object.defineProperty(y, 'yid', {
+    value: 2,
+    writable: true,
+    enumerable: false,
+    configurable: true
+  })
+  Object.defineProperty(y, mySymbol, {
+    value: 'new',
+    writable: true,
+    enumerable: false,
+    configurable: true
+  })
+  res = merge(x, y)
+  t.is(res.value, 42)
+  t.is(res.other, 33)
+  t.is(res.xid, 1)
+  t.is(res.yid, 2)
+  t.is(res[mySymbol], 'new')
+  t.is(Object.keys(res).length, 2)
+  t.true(Object.keys(res).includes('value'))
+  t.true(Object.keys(res).includes('other'))
 })

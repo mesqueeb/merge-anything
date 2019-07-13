@@ -11,5 +11,5 @@ interface IConfig {
  * @param {...any[]} newComers
  * @returns the result
  */
-export default function (origin: IConfig | any, ...newComers: any[]): any;
+export default function merge(origin: IConfig | any, ...newComers: any[]): any;
 export {};
