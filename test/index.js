@@ -353,3 +353,13 @@ test('works with unlimited depth', t => {
   t.deepEqual(t3, {t3: 'new'})
   t.deepEqual(t4, {t4: 'new', t3: {}})
 })
+
+test('symbols as keys', t => {
+  const mySymbol = Symbol('mySymbol')
+  const x = { value: 42, [mySymbol]: 'hello' }
+  const y = { other: 33 }
+  const res = merge(x, y)
+  t.is(res.value, 42)
+  t.is(res.other, 33)
+  t.is(res[mySymbol], 'hello')
+})
