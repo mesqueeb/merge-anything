@@ -66,6 +66,7 @@ const c = merge(a, b)
 // However, be careful with JavaScript object references. See below: A note on JavaScript object references
 
 // arrays get overwritten
+// (for "concat" logic, see Extensions below)
 merge({array: ['a']}, {array: ['b']}) // returns {array: ['b']}
 
 // empty objects merge into objects
@@ -83,15 +84,55 @@ merge-anything properly keeps special objects intact like dates, regex, function
 
 However, it's **very important** you understand how to work around JavaScript object references. Please be sure to read [a note on JavaScript object references](#a-note-on-javascript-object-references) down below.
 
-## Extend merge rules
+## Extensions & custom rules
 
-merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.**
+There might be times you need to tweak the logic when two things are merged, eg. you need arrays to be *concatenated* instead of *overwritten*. This is possible through an extension!
 
-### Concat arrays
+To keep the source code _as small as possible_ I opted for an extionsion system where you can import just the logic you need.
 
-Eg. merge-anything will overwrite arrays by default but you could change this logic to make it so it will concat the arrays.
+### Concat arrays extension
 
-To do so your first parameter you pass has to be an object that looks like `{extensions: []}` and include an array of functions. In these functions you can change the value that will be overwriting the origin. See how to do this below:
+```js
+import { merge, concatArrays } from 'merge-anything'
+
+merge(
+  {extensions: [concatArrays]}, // pass your extensions like so
+  {array: ['a']},
+  {array: ['b']}
+)
+// returns {array: ['a', 'b']}
+```
+
+All extensions get triggered at the top level and at every single nested prop. Let's look at two more examples to clarify this:
+
+```js
+// top level:
+merge(
+  {extensions: [concatArrays]},
+  ['a'],
+  ['b']
+)
+// returns ['a', 'b']
+
+// nested props:
+merge(
+  {extensions: [concatArrays]}, // pass your extensions like so
+  {nested: {prop: {array: ['a']}}},
+  {nested: {prop: {array: ['b']}}},
+  {array: ['b']}
+)
+// returns {nested: {prop: {array: ['a', 'b']}}},
+```
+
+Super simple!
+
+### Making your own extension / custom rule
+
+The `concatArrays` extension imported above is actually just a function that takes both values it's trying to merge, and returns a new value. An "extension" function is triggered at the top level and on any nested props that should be merged.
+
+This means that merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.** Let's look at the `concatArrays` function as an example to see how you can write your own custom rules:
+
+You have to define a function that receives two parameters. The first is the original value and the second is the new value that's being merged onto the original. When concatenating arrays, you can simply check if the value is an array or not and concatenate if it is.
 
 ```js
 function concatArrays (originVal, newVal) {
@@ -102,14 +143,14 @@ function concatArrays (originVal, newVal) {
   return newVal // always return newVal as fallback!!
 }
 merge(
-  {extensions: [concatArrays]}, // pass your extensions like so
+  {extensions: [concatArrays]}, // pass your custom functions like so
   {array: ['a']},
   {array: ['b']}
 )
 // results in {array: ['a', 'b']}
 ```
 
-Please note that each extension-function receives an `originVal` and `newVal` and **has** to return the `newVal` on fallback no matter what (in case your condition check fails or something)!
+Please note that each extension-function receives an `originVal` and `newVal` and **has** to return the `newVal` on fallback no matter what. Otherwise there might be cases that the original value is overwritten with `undefined`.
 
 ## A note on JavaScript object references
 

@@ -1,5 +1,7 @@
 'use strict';
 
+Object.defineProperty(exports, '__esModule', { value: true });
+
 var isWhat = require('is-what');
 
 function mergeRecursively(origin, newComer, extensions) {
@@ -61,7 +63,7 @@ function mergeRecursively(origin, newComer, extensions) {
  * @param {...any[]} newComers
  * @returns the result
  */
-function index (origin) {
+function merge (origin) {
     var newComers = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         newComers[_i - 1] = arguments[_i];
@@ -77,4 +79,14 @@ function index (origin) {
     }, base);
 }
 
-module.exports = index;
+function concatArrays(originVal, newVal) {
+    if (isWhat.isArray(originVal) && isWhat.isArray(newVal)) {
+        // concat logic
+        return originVal.concat(newVal);
+    }
+    return newVal; // always return newVal as fallback!!
+}
+
+exports.merge = merge;
+exports.concatArrays = concatArrays;
+exports.default = merge;

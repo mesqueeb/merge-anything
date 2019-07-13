@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "2.2.5",
+  "version": "2.3.5",
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -44,15 +44,15 @@
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
   "devDependencies": {
     "@ava/babel-preset-stage-4": "^2.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
     "ava": "^1.4.1",
-    "copy-anything": "^1.2.3",
+    "copy-anything": "^1.2.4",
     "rollup": "^0.65.2",
-    "rollup-plugin-typescript2": "^0.21.1",
-    "typescript": "^3.5.1"
+    "rollup-plugin-typescript2": "^0.21.2",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "is-what": "^3.2.3"
+    "is-what": "^3.2.4"
   }
 }

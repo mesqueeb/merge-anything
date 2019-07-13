@@ -1,5 +1,6 @@
 import test from 'ava'
 import merge from '../dist/index.cjs'
+import { concatArrays } from '../dist/index.cjs'
 import copy from 'copy-anything'
 import { isDate, isFunction, isString, isArray, isObject } from 'is-what'
 
@@ -160,12 +161,28 @@ test('Extend conversion', t => {
 })
 test('Extend concat arrays', t => {
   let res, origin, target
-  function concatArrays (originVal, targetVal) {
+  function concatArr (originVal, targetVal) {
     if (isArray(originVal) && isArray(targetVal)) {
       return originVal.concat(targetVal)
     }
     return targetVal
   }
+  origin = {
+    someArray: ['a'],
+    a: {b: {c: ['x']}}
+  }
+  target = {
+    someArray: ['b'],
+    a: {b: {c: ['y']}}
+  }
+  res = merge({extensions: [concatArr]}, origin, target)
+  t.deepEqual(res, {someArray: ['a', 'b'], a: {b: {c: ['x', 'y']}}})
+  // also works on base lvl
+  res = merge({extensions: [concatArr]}, ['a'], ['b'])
+  t.deepEqual(res, ['a', 'b'])
+})
+test('import concat array extension', t => {
+  let res, origin, target
   origin = {
     someArray: ['a'],
     a: {b: {c: ['x']}}

@@ -59,7 +59,7 @@ function mergeRecursively(origin, newComer, extensions) {
  * @param {...any[]} newComers
  * @returns the result
  */
-function index (origin) {
+function merge (origin) {
     var newComers = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         newComers[_i - 1] = arguments[_i];
@@ -75,4 +75,13 @@ function index (origin) {
     }, base);
 }
 
-export default index;
+function concatArrays(originVal, newVal) {
+    if (isArray(originVal) && isArray(newVal)) {
+        // concat logic
+        return originVal.concat(newVal);
+    }
+    return newVal; // always return newVal as fallback!!
+}
+
+export default merge;
+export { merge, concatArrays };
