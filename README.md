@@ -180,7 +180,7 @@ import copy from 'copy-anything'
 
 const original = {airport: {airplane: 'dep. 🛫'}}
 const extraInfo = {airport: {location: 'Brussels'}}
-const merged = merge(copy(original), extraInfo)
+const merged = copy(merge(original, extraInfo))
 
 // we change the airplane from departuring 🛫 to landing 🛬
 merged.airport.airplane = 'lan. 🛬'
@@ -188,6 +188,8 @@ merged.airport.airplane = 'lan. 🛬'
 // `original` won't be modified!
 (original.airport.airplane === 'lan. 🛬') // true
 ```
+
+You can then play around where you want to place the `copy()` function.
 
 ## Source code
 
