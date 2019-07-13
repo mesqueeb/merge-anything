@@ -156,15 +156,15 @@ Please note that each extension-function receives an `originVal` and `newVal` an
 Be careful for JavaScript object reference. Any property that's nested will be reactive and linked between the original and the merged objects! Down below we'll show how to prevent this.
 
 ```js
-const original = {airport: {airplane: '🛫'}}
-const new = {country: {location: 'Brussels'}}
-const merged = merge(original, merged)
+const original = {airport: {airplane: 'dep. 🛫'}}
+const extraInfo = {airport: {location: 'Brussels'}}
+const merged = merge(original, extraInfo)
 
 // we change the airplane from departuring 🛫 to landing 🛬
-original.airport.airplane = '🛬'
-// This will change the value for `original` AND `merged`!!!
-original.airport.airplane === '🛬' // true
-merged.airport.airplane === '🛬' // true
+merged.airport.airplane = 'lan. 🛬'
+(merged.airport.airplane === 'lan. 🛬') // true
+// However, `original` was also modified!
+(original.airport.airplane === 'lan. 🛬') // true
 ```
 
 The key rule to remember is:
@@ -174,19 +174,19 @@ The key rule to remember is:
 However, **there is a really easy solution**. We can just copy the merge result to get rid of any reactivity. For this we can use the [copy-anything](https://github.com/mesqueeb/copy-anything) library. This library also makes sure that _special class instances do not break_, so you can use it without fear of breaking stuff!
 
 See below how we integrate 'copy-anything':
+
 ```js
 import copy from 'copy-anything'
 
-const original = {airport: {airplane: '🛫'}}
-const new = {country: {location: 'Brussels'}}
-const merged = merge(original, merged)
-const mergedNotReactive = copy(merged)
+const original = {airport: {airplane: 'dep. 🛫'}}
+const extraInfo = {airport: {location: 'Brussels'}}
+const merged = merge(copy(original), extraInfo)
 
 // we change the airplane from departuring 🛫 to landing 🛬
-original.airport.airplane = '🛬'
-// `original` and `mergedNotReactive` are not linked anymore!
-original.airport.airplane === '🛬' // true
-mergedNotReactive.airport.airplane === '🛫' // true
+merged.airport.airplane = 'lan. 🛬'
+(merged.airport.airplane === 'lan. 🛬') // true
+// `original` won't be modified!
+(original.airport.airplane === 'lan. 🛬') // true
 ```
 
 ## Source code
