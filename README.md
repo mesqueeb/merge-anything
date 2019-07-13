@@ -119,7 +119,6 @@ merge(
   {extensions: [concatArrays]}, // pass your extensions like so
   {nested: {prop: {array: ['a']}}},
   {nested: {prop: {array: ['b']}}},
-  {array: ['b']}
 )
 // returns {nested: {prop: {array: ['a', 'b']}}},
 ```
