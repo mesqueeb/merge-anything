@@ -188,7 +188,7 @@ const merged = copy(merge(original, extraInfo))
 merged.airport.airplane = 'lan. 🛬'
 (merged.airport.airplane === 'lan. 🛬') // true
 // `original` won't be modified!
-(original.airport.airplane === 'lan. 🛬') // true
+(original.airport.airplane === 'dep. 🛫') // true
 ```
 
 You can then play around where you want to place the `copy()` function.
