@@ -49,7 +49,7 @@ export default [
   defaults({
     input: 'src/index.ts',
     output: [
-      {file: 'dist/index.cjs.js', format: 'cjs'},
+      {file: 'dist/index.cjs', format: 'cjs', exports: 'named'},
       {file: 'dist/index.esm.js', format: 'esm'},
     ],
   }),
