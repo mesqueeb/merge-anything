@@ -1,14 +1,9 @@
 {
   "name": "merge-anything",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "type": "module",
-  "exports": {
-    "require": "dist/index.cjs.js",
-    "default": "dist/index.esm.js"
-  },
   "typings": "types/index.d.ts",
   "scripts": {
     "test": "ava",
