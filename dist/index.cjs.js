@@ -27,8 +27,18 @@ function __spreadArrays() {
     return r;
 }
 
+// type IsPlainObject<T> = T extends PlainObject ? true : false
+// type Assign<T1, T2> = [IsPlainObject<T1>, IsPlainObject<T2>] extends [true, true]
+//   ? ObjectTs.Merge<T1, T2>
+//   : T2
+// type Merged<T, U extends any[]> = {
+//   0: T
+//   1: ((...t: U) => any) extends (head: infer Head, ...tail: infer Tail) => any
+//     ? Merged<Assign<T, Head>, Tail>
+//     : never
+// }[U['length'] extends 0 ? 0 : 1]
 function assignProp(carry, key, newVal, originalObject) {
-    var propType = originalObject.propertyIsEnumerable(key)
+    var propType = {}.propertyIsEnumerable.call(originalObject, key)
         ? 'enumerable'
         : 'nonenumerable';
     if (propType === 'enumerable')
@@ -38,28 +48,20 @@ function assignProp(carry, key, newVal, originalObject) {
             value: newVal,
             enumerable: false,
             writable: true,
-            configurable: true
+            configurable: true,
         });
     }
 }
-function mergeRecursively(origin, newComer, extensions) {
-    // work directly on newComer if its not an object
-    if (!isWhat.isPlainObject(newComer)) {
-        // extend merge rules
-        if (extensions && isWhat.isArray(extensions)) {
-            extensions.forEach(function (extend) {
-                newComer = extend(origin, newComer);
-            });
-        }
+function mergeRecursively(origin, newComer) {
+    // always return newComer if its not an object
+    if (!isWhat.isPlainObject(newComer))
         return newComer;
-    }
     // define newObject to merge all values upon
     var newObject = {};
     if (isWhat.isPlainObject(origin)) {
         var props_1 = Object.getOwnPropertyNames(origin);
         var symbols_1 = Object.getOwnPropertySymbols(origin);
         newObject = __spreadArrays(props_1, symbols_1).reduce(function (carry, key) {
-            // @ts-ignore
             var targetVal = origin[key];
             if ((!isWhat.isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
                 (isWhat.isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))) {
@@ -68,24 +70,16 @@ function mergeRecursively(origin, newComer, extensions) {
             return carry;
         }, {});
     }
+    // newObject has all properties that newComer hasn't
     var props = Object.getOwnPropertyNames(newComer);
     var symbols = Object.getOwnPropertySymbols(newComer);
     var result = __spreadArrays(props, symbols).reduce(function (carry, key) {
         // re-define the origin and newComer as targetVal and newVal
         var newVal = newComer[key];
-        var targetVal = (isWhat.isPlainObject(origin))
-            // @ts-ignore
-            ? origin[key]
-            : undefined;
-        // extend merge rules
-        if (extensions && isWhat.isArray(extensions)) {
-            extensions.forEach(function (extend) {
-                newVal = extend(targetVal, newVal);
-            });
-        }
+        var targetVal = isWhat.isPlainObject(origin) ? origin[key] : undefined;
         // When newVal is an object do the merge recursively
         if (targetVal !== undefined && isWhat.isPlainObject(newVal)) {
-            newVal = mergeRecursively(targetVal, newVal, extensions);
+            newVal = mergeRecursively(targetVal, newVal);
         }
         assignProp(carry, key, newVal, newComer);
         return carry;
@@ -97,25 +91,34 @@ function mergeRecursively(origin, newComer, extensions) {
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  *
- * @param {(IConfig | any)} origin
- * @param {...any[]} newComers
- * @returns the result
+ * @export
+ * @template T
+ * @template Tn
+ * @param {T} origin
+ * @param {...Tn} newComers
+ * @returns {Assigned<T, Tn>}
  */
 function merge(origin) {
     var newComers = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         newComers[_i - 1] = arguments[_i];
     }
-    var extensions = null;
-    var base = origin;
-    if (isWhat.isPlainObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
-        base = {};
-        extensions = origin.extensions;
-    }
+    // @ts-ignore
     return newComers.reduce(function (result, newComer) {
-        return mergeRecursively(result, newComer, extensions);
-    }, base);
+        return mergeRecursively(result, newComer);
+    }, origin);
 }
+// export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
+//   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
+//   origin: T,
+//   ...newComers: Tn
+// ): Merged<T, Tn> {
+// }
+// export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
+//   origin: T,
+//   ...newComers: Tn
+// ): Merged<T, Tn> {
+// }
 
 function concatArrays(originVal, newVal) {
     if (isWhat.isArray(originVal) && isWhat.isArray(newVal)) {
@@ -126,5 +129,4 @@ function concatArrays(originVal, newVal) {
 }
 
 exports.concatArrays = concatArrays;
-exports.default = merge;
 exports.merge = merge;

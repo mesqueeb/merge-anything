@@ -1,15 +1,18 @@
-declare type Extension = (param1: any, param2: any) => any;
-interface IConfig {
-    extensions: Extension[];
-}
+import { Object as ObjectTs } from 'ts-toolbelt';
+declare type PlainObject = {
+    [key: string | symbol]: any;
+};
 /**
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  *
- * @param {(IConfig | any)} origin
- * @param {...any[]} newComers
- * @returns the result
+ * @export
+ * @template T
+ * @template Tn
+ * @param {T} origin
+ * @param {...Tn} newComers
+ * @returns {Assigned<T, Tn>}
  */
-export default function merge(origin: IConfig | any, ...newComers: any[]): any;
+export declare function merge<T extends PlainObject, Tn extends PlainObject[]>(origin: T, ...newComers: Tn): ObjectTs.Assign<T, Tn>;
 export {};

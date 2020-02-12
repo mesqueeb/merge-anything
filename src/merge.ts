@@ -1,13 +1,29 @@
-import { isArray, isPlainObject, isSymbol } from 'is-what'
+import { Object as ObjectTs } from 'ts-toolbelt'
+import { isPlainObject, isSymbol } from 'is-what'
 
-type Extension = (param1: any, param2: any) => any
+// @ts-ignore
+type PlainObject = { [key: string | symbol]: any }
 
-interface IConfig {
-  extensions: Extension[]
-}
+// type IsPlainObject<T> = T extends PlainObject ? true : false
 
-function assignProp (carry, key, newVal, originalObject) {
-  const propType = originalObject.propertyIsEnumerable(key)
+// type Assign<T1, T2> = [IsPlainObject<T1>, IsPlainObject<T2>] extends [true, true]
+//   ? ObjectTs.Merge<T1, T2>
+//   : T2
+
+// type Merged<T, U extends any[]> = {
+//   0: T
+//   1: ((...t: U) => any) extends (head: infer Head, ...tail: infer Tail) => any
+//     ? Merged<Assign<T, Head>, Tail>
+//     : never
+// }[U['length'] extends 0 ? 0 : 1]
+
+function assignProp (
+  carry: PlainObject,
+  key: string | symbol,
+  newVal: any,
+  originalObject: PlainObject
+): void {
+  const propType = {}.propertyIsEnumerable.call(originalObject, key)
     ? 'enumerable'
     : 'nonenumerable'
   if (propType === 'enumerable') carry[key] = newVal
@@ -16,63 +32,47 @@ function assignProp (carry, key, newVal, originalObject) {
       value: newVal,
       enumerable: false,
       writable: true,
-      configurable: true
+      configurable: true,
     })
   }
 }
 
-function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
-  // work directly on newComer if its not an object
-  if (!isPlainObject(newComer)) {
-    // extend merge rules
-    if (extensions && isArray(extensions)) {
-      extensions.forEach(extend => {
-        newComer = extend(origin, newComer)
-      })
-    }
-    return newComer
-  }
+function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject | any> (
+  origin: T1,
+  newComer: T2
+): (T1 & T2) | T2 {
+  // always return newComer if its not an object
+  if (!isPlainObject(newComer)) return newComer
   // define newObject to merge all values upon
-  let newObject = {}
+  let newObject = {} as (T1 & T2) | T2
   if (isPlainObject(origin)) {
     const props = Object.getOwnPropertyNames(origin)
     const symbols = Object.getOwnPropertySymbols(origin)
-    newObject = [...props, ...symbols]
-      .reduce((carry, key) => {
-        // @ts-ignore
-        const targetVal = origin[key]
-        if (
-          (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
-          (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
-        ) {
-          assignProp(carry, key, targetVal, origin)
-        }
-        return carry
-      }, {})
+    newObject = [...props, ...symbols].reduce((carry, key) => {
+      const targetVal = origin[key]
+      if (
+        (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
+        (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
+      ) {
+        assignProp(carry, key, targetVal, origin)
+      }
+      return carry
+    }, {} as (T1 & T2) | T2)
   }
+  // newObject has all properties that newComer hasn't
   const props = Object.getOwnPropertyNames(newComer)
   const symbols = Object.getOwnPropertySymbols(newComer)
-  let result = [...props, ...symbols]
-    .reduce((carry, key) => {
-      // re-define the origin and newComer as targetVal and newVal
-      let newVal = newComer[key]
-      const targetVal = (isPlainObject(origin))
-        // @ts-ignore
-        ? origin[key]
-        : undefined
-      // extend merge rules
-      if (extensions && isArray(extensions)) {
-        extensions.forEach(extend => {
-          newVal = extend(targetVal, newVal)
-        })
-      }
-      // When newVal is an object do the merge recursively
-      if (targetVal !== undefined && isPlainObject(newVal)) {
-        newVal = mergeRecursively(targetVal, newVal, extensions)
-      }
-      assignProp(carry, key, newVal, newComer)
-      return carry
-    }, newObject)
+  const result = [...props, ...symbols].reduce((carry, key) => {
+    // re-define the origin and newComer as targetVal and newVal
+    let newVal = newComer[key]
+    const targetVal = isPlainObject(origin) ? origin[key] : undefined
+    // When newVal is an object do the merge recursively
+    if (targetVal !== undefined && isPlainObject(newVal)) {
+      newVal = mergeRecursively(targetVal, newVal)
+    }
+    assignProp(carry, key, newVal, newComer)
+    return carry
+  }, newObject)
   return result
 }
 
@@ -81,18 +81,34 @@ function mergeRecursively(origin: any, newComer: any, extensions: Extension[]) {
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  *
- * @param {(IConfig | any)} origin
- * @param {...any[]} newComers
- * @returns the result
+ * @export
+ * @template T
+ * @template Tn
+ * @param {T} origin
+ * @param {...Tn} newComers
+ * @returns {Assigned<T, Tn>}
  */
-export default function merge (origin: IConfig | any, ...newComers: any[]) {
-  let extensions = null
-  let base = origin
-  if (isPlainObject(origin) && origin.extensions && Object.keys(origin).length === 1) {
-    base = {}
-    extensions = origin.extensions
-  }
+export function merge<T extends PlainObject, Tn extends PlainObject[]> (
+  origin: T,
+  ...newComers: Tn
+): ObjectTs.Assign<T, Tn> {
+  // @ts-ignore
   return newComers.reduce((result, newComer) => {
-    return mergeRecursively(result, newComer, extensions)
-  }, base)
+    return mergeRecursively(result, newComer)
+  }, origin)
 }
+
+// export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
+//   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
+//   origin: T,
+//   ...newComers: Tn
+// ): Merged<T, Tn> {
+
+// }
+
+// export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
+//   origin: T,
+//   ...newComers: Tn
+// ): Merged<T, Tn> {
+
+// }
