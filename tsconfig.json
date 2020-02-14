@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./types/"
+    "declarationDir": "./types/",
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*"

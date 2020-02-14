@@ -4,16 +4,17 @@
 npm i merge-anything
 ```
 
-Merge objects & other types recursively. A simple & small integration.
+Merge objects & other types recursively. Fully **TypeScript** supported! A simple & small integration.
 
 ## Motivation
 
-I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and *all of them break things they are not supposed to break*... 😞
+I created this package because I tried a lot of similar packages that do merging/deepmerging/recursive object assign etc. But all had its quirks, and _all of them break things they are not supposed to break_... 😞
 
 I was looking for:
 
-- a simple merge function like `Object.assign()`
+- a simple merge function like `Object.assign()` but deep
 - supports merging of nested properties
+- supports TypeScript: the type of the result is what JS actually returns
 - supports symbols
 - supports enumerable & nonenumerable props
 - **does not break special class instances**　‼️
@@ -37,30 +38,36 @@ merge-anything will merge objects and nested properties, but only as long as the
 Pass the base param first and then an unlimited amount of params to merge onto it.
 
 ```js
-import merge from 'merge-anything'
+import { merge } from 'merge-anything'
 
-const starter = {name: 'Squirtle', type: 'water'}
-const newValues = {name: 'Wartortle', level: 16}
+const starter = { name: 'Squirtle', types: { water: true } }
+const newValues = { name: 'Wartortle', types: { fighting: true }, level: 16 }
 
-merge(starter, newValues, {is: 'cool'})
+const evolution = merge(starter, newValues, { is: 'cool' })
 // returns {
 //   name: 'Wartortle',
-//   type: 'water,
+//   types: { water: true, fighting: true },
 //   level: 16,
 //   is: 'cool'
 // }
 ```
 
+## TypeScript Support
+
+In the example above, if you are using TypeScript, and you hover over `evolution`, you can actually see the type of your new object right then and there. This is very powerful, because you can merge things, and without needing `any`, TypeScript will know exactly how your newly merged objects look!
+
+![typescript support](./github/typescript-support.png)
+
 ## Rules
 
 This package will recursively go through plain objects and merge the values onto a new object.
 
-> Please note that this package recognises special JavaScript objects like classes. In such cases it will not recursively merge them like objects, but assign the class onto the new object "as is"!
+> Please note that this package recognises special JavaScript objects like class instances. In such cases it will not recursively merge them like objects, but assign the class onto the new object "as is"!
 
 ```js
 // all passed objects do not get modified
-const a = {a: 'a'}
-const b = {b: 'b'}
+const a = { a: 'a' }
+const b = { b: 'b' }
 const c = merge(a, b)
 // a === {a: 'a'}
 // b === {b: 'b'}
@@ -69,104 +76,77 @@ const c = merge(a, b)
 
 // arrays get overwritten
 // (for "concat" logic, see Extensions below)
-merge({array: ['a']}, {array: ['b']}) // returns {array: ['b']}
+merge({ array: ['a'] }, { array: ['b'] }) // returns {array: ['b']}
 
 // empty objects merge into objects
-merge({obj: {prop: 'a'}}, {obj: {}}) // returns {obj: {prop: 'a'}}
+merge({ obj: { prop: 'a' } }, { obj: {} }) // returns {obj: {prop: 'a'}}
 
 // but non-objects overwrite objects
-merge({obj: {prop: 'a'}}, {obj: null}) // returns {obj: null}
-merge({obj: 'a'}, 'b') // returns 'b'
+merge({ obj: { prop: 'a' } }, { obj: null }) // returns {obj: null}
+merge({ obj: 'a' }, 'b') // returns 'b'
 
 // and empty objects overwrite non-objects
-merge({prop: 'a'}, {prop: {}}) // returns {prop: {}}
+merge({ prop: 'a' }, { prop: {} }) // returns {prop: {}}
 ```
 
 merge-anything properly keeps special objects intact like dates, regex, functions, class instances etc.
 
 However, it's **very important** you understand how to work around JavaScript object references. Please be sure to read [a note on JavaScript object references](#a-note-on-javascript-object-references) down below.
 
-## Extensions & custom rules
+## Concat arrays
 
-There might be times you need to tweak the logic when two things are merged, eg. you need arrays to be *concatenated* instead of *overwritten*. This is possible through an extension!
-
-To keep the source code _as small as possible_ I opted for an extionsion system where you can import just the logic you need.
-
-### Concat arrays extension
+The default behaviour is that arrays are overwritten. You can import `mergeAndConcat` if you need to concatenate arrays. But don't worry if you don't need this, this library is tree-shakable and won't import code you don't use!
 
 ```js
-import { merge, concatArrays } from 'merge-anything'
+import { mergeAndConcat } from 'merge-anything'
 
 merge(
-  {extensions: [concatArrays]}, // pass your extensions like so
-  {array: ['a']},
-  {array: ['b']}
+  { extensions: [concatArrays] }, // pass your extensions like so
+  { nested: { prop: { array: ['a'] } } },
+  { nested: { prop: { array: ['b'] } } }
 )
-// returns {array: ['a', 'b']}
+// returns { nested: { prop: { array: ['a', 'b'] } } },
 ```
 
-All extensions get triggered at the top level and at every single nested prop. Let's look at two more examples to clarify this:
+## Compare Function when a value is merged
+
+There might be times you need to tweak the logic when two things are merged. You can provide your own custom function that's triggered every time a value is overwritten.
+
+Here is an example with a compare function that concatenates strings:
 
 ```js
-// top level:
-merge(
-  {extensions: [concatArrays]},
-  ['a'],
-  ['b']
-)
-// returns ['a', 'b']
-
-// nested props:
-merge(
-  {extensions: [concatArrays]}, // pass your extensions like so
-  {nested: {prop: {array: ['a']}}},
-  {nested: {prop: {array: ['b']}}},
-)
-// returns {nested: {prop: {array: ['a', 'b']}}},
-```
-
-Super simple!
-
-### Making your own extension / custom rule
-
-The `concatArrays` extension imported above is actually just a function that takes both values it's trying to merge, and returns a new value. An "extension" function is triggered at the top level and on any nested props that should be merged.
-
-This means that merge-anything can be really powerful because every step of the way **you can define rules to extend the overwrite logic.** Let's look at the `concatArrays` function as an example to see how you can write your own custom rules:
-
-You have to define a function that receives two parameters. The first is the original value and the second is the new value that's being merged onto the original. When concatenating arrays, you can simply check if the value is an array or not and concatenate if it is.
-
-```js
-function concatArrays (originVal, newVal) {
-  if (Array.isArray(originVal) && Array.isArray(newVal)) {
+function concatStrings (originVal, newVal, key) {
+  if (typeof originVal === 'string' && typeof newVal === 'string') {
     // concat logic
-    return originVal.concat(newVal)
+    return `${originVal}${newVal}`
   }
-  return newVal // always return newVal as fallback!!
+  // always return newVal as fallback!!
+  return newVal
 }
-merge(
-  {extensions: [concatArrays]}, // pass your custom functions like so
-  {array: ['a']},
-  {array: ['b']}
-)
-// results in {array: ['a', 'b']}
+
+mergeAndCompare(concatStrings, { name: 'John' }, { name: 'Simth' })
+// returns { name: 'JohnSmith' }
 ```
 
-Please note that each extension-function receives an `originVal` and `newVal` and **has** to return the `newVal` on fallback no matter what. Otherwise there might be cases that the original value is overwritten with `undefined`.
+> Note for TypeScript users. The type returned by this function might not be correct. In that case you have to cast the result to your own provided interface
 
 ## A note on JavaScript object references
 
 Be careful for JavaScript object reference. Any property that's nested will be reactive and linked between the original and the merged objects! Down below we'll show how to prevent this.
 
 ```js
-const original = {airport: {airplane: 'dep. 🛫'}}
-const extraInfo = {airport: {location: 'Brussels'}}
+const original = { airport: { airplane: 'dep. 🛫' } }
+const extraInfo = { airport: { location: 'Brussels' } }
 const merged = merge(original, extraInfo)
 
 // we change the airplane from departuring 🛫 to landing 🛬
 merged.airport.airplane = 'lan. 🛬'
-(merged.airport.airplane === 'lan. 🛬') // true
-// However, `original` was also modified!
-(original.airport.airplane === 'lan. 🛬') // true
+
+// the `merged` value will be modified
+// merged.airport.airplane === 'lan. 🛬'
+
+// However `original` value will also be modified!!
+// original.airport.airplane === 'lan. 🛬'
 ```
 
 The key rule to remember is:
@@ -180,18 +160,21 @@ See below how we integrate 'copy-anything':
 ```js
 import copy from 'copy-anything'
 
-const original = {airport: {airplane: 'dep. 🛫'}}
-const extraInfo = {airport: {location: 'Brussels'}}
+const original = { airport: { airplane: 'dep. 🛫' } }
+const extraInfo = { airport: { location: 'Brussels' } }
 const merged = copy(merge(original, extraInfo))
 
 // we change the airplane from departuring 🛫 to landing 🛬
-merged.airport.airplane = 'lan. 🛬'
-(merged.airport.airplane === 'lan. 🛬') // true
-// `original` won't be modified!
-(original.airport.airplane === 'dep. 🛫') // true
+merged.airport.airplane = 'lan. 🛬'(merged.airport.airplane === 'lan. 🛬')(
+  // true
+  // `original` won't be modified!
+  original.airport.airplane === 'dep. 🛫'
+) // true
 ```
 
 You can then play around where you want to place the `copy()` function.
+
+Copy Anything is also fully TypeScript supported!
 
 ## Source code
 
@@ -203,32 +186,30 @@ import { isPlainObject } from 'is-what'
 function mergeRecursively (origin, newComer) {
   if (!isPlainObject(newComer)) return newComer
   // define newObject to merge all values upon
-  const newObject = (isPlainObject(origin))
-    ? Object.keys(origin)
-      .reduce((carry, key) => {
+  const newObject = isPlainObject(origin)
+    ? Object.keys(origin).reduce((carry, key) => {
         const targetVal = origin[key]
         if (!Object.keys(newComer).includes(key)) carry[key] = targetVal
         return carry
       }, {})
     : {}
-  return Object.keys(newComer)
-    .reduce((carry, key) => {
-      const newVal = newComer[key]
-      const targetVal = origin[key]
-      // early return when targetVal === undefined
-      if (targetVal === undefined) {
-        carry[key] = newVal
-        return carry
-      }
-      // When newVal is an object do the merge recursively
-      if (isPlainObject(newVal)) {
-        carry[key] = mergeRecursively(targetVal, newVal)
-        return carry
-      }
-      // all the rest
+  return Object.keys(newComer).reduce((carry, key) => {
+    const newVal = newComer[key]
+    const targetVal = origin[key]
+    // early return when targetVal === undefined
+    if (targetVal === undefined) {
       carry[key] = newVal
       return carry
-    }, newObject)
+    }
+    // When newVal is an object do the merge recursively
+    if (isPlainObject(newVal)) {
+      carry[key] = mergeRecursively(targetVal, newVal)
+      return carry
+    }
+    // all the rest
+    carry[key] = newVal
+    return carry
+  }, newObject)
 }
 ```
 

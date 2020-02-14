@@ -1,5 +1,2 @@
-import merge from './merge'
-import { concatArrays } from './extensions'
-
-export { concatArrays, merge }
-export default merge
+export { merge, mergeAndCompare, mergeAndConcat } from './merge'
+export { concatArrays } from './extensions'

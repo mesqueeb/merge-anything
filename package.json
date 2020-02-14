@@ -1,14 +1,16 @@
 {
   "name": "merge-anything",
-  "version": "2.4.4",
+  "version": "3.0.1",
+  "sideEffects": false,
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
   "typings": "types/index.d.ts",
   "scripts": {
+    "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
     "test": "ava",
     "rollup": "rollup -c build/rollup.js",
-    "build": "npm run rollup && npm run test"
+    "build": "npm run lint && npm run lint && npm run test && npm run rollup"
   },
   "repository": {
     "type": "git",
@@ -42,17 +44,24 @@
     "url": "https://github.com/mesqueeb/merge-anything/issues"
   },
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
-  "devDependencies": {
-    "@ava/babel-preset-stage-4": "^4.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
-    "@babel/preset-env": "^7.7.1",
-    "ava": "^2.4.0",
-    "copy-anything": "^1.5.0",
-    "rollup": "^1.27.3",
-    "rollup-plugin-typescript2": "^0.25.2",
-    "typescript": "^3.7.2"
-  },
   "dependencies": {
-    "is-what": "^3.3.1"
+    "is-what": "^3.6.0",
+    "ts-toolbelt": "^6.2.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
+    "ava": "^3.3.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-tree-shaking": "^1.8.0",
+    "rollup": "^1.31.0",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5"
+  },
+  "ava": {
+    "extensions": ["ts"],
+    "require": ["ts-node/register"]
   }
 }
