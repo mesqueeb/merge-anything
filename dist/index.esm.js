@@ -1,4 +1,4 @@
-import { isPlainObject, isSymbol, isArray } from 'is-what';
+import { isArray, isPlainObject, isSymbol } from 'is-what';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,16 +23,14 @@ function __spreadArrays() {
     return r;
 }
 
-// type IsPlainObject<T> = T extends PlainObject ? true : false
-// type Assign<T1, T2> = [IsPlainObject<T1>, IsPlainObject<T2>] extends [true, true]
-//   ? ObjectTs.Merge<T1, T2>
-//   : T2
-// type Merged<T, U extends any[]> = {
-//   0: T
-//   1: ((...t: U) => any) extends (head: infer Head, ...tail: infer Tail) => any
-//     ? Merged<Assign<T, Head>, Tail>
-//     : never
-// }[U['length'] extends 0 ? 0 : 1]
+function concatArrays(originVal, newVal) {
+    if (isArray(originVal) && isArray(newVal)) {
+        // concat logic
+        return originVal.concat(newVal);
+    }
+    return newVal; // always return newVal as fallback!!
+}
+
 function assignProp(carry, key, newVal, originalObject) {
     var propType = {}.propertyIsEnumerable.call(originalObject, key)
         ? 'enumerable'
@@ -48,7 +46,7 @@ function assignProp(carry, key, newVal, originalObject) {
         });
     }
 }
-function mergeRecursively(origin, newComer) {
+function mergeRecursively(origin, newComer, compareFn) {
     // always return newComer if its not an object
     if (!isPlainObject(newComer))
         return newComer;
@@ -75,9 +73,10 @@ function mergeRecursively(origin, newComer) {
         var targetVal = isPlainObject(origin) ? origin[key] : undefined;
         // When newVal is an object do the merge recursively
         if (targetVal !== undefined && isPlainObject(newVal)) {
-            newVal = mergeRecursively(targetVal, newVal);
+            newVal = mergeRecursively(targetVal, newVal, compareFn);
         }
-        assignProp(carry, key, newVal, newComer);
+        var propToAssign = compareFn ? compareFn(targetVal, newVal, key) : newVal;
+        assignProp(carry, key, propToAssign, newComer);
         return carry;
     }, newObject);
     return result;
@@ -104,24 +103,25 @@ function merge(origin) {
         return mergeRecursively(result, newComer);
     }, origin);
 }
-// export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
-//   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
-//   origin: T,
-//   ...newComers: Tn
-// ): Merged<T, Tn> {
-// }
-// export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
-//   origin: T,
-//   ...newComers: Tn
-// ): Merged<T, Tn> {
-// }
-
-function concatArrays(originVal, newVal) {
-    if (isArray(originVal) && isArray(newVal)) {
-        // concat logic
-        return originVal.concat(newVal);
+function mergeAndCompare(compareFn, origin) {
+    var newComers = [];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        newComers[_i - 2] = arguments[_i];
     }
-    return newVal; // always return newVal as fallback!!
+    // @ts-ignore
+    return newComers.reduce(function (result, newComer) {
+        return mergeRecursively(result, newComer, compareFn);
+    }, origin);
+}
+function mergeAndConcat(origin) {
+    var newComers = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        newComers[_i - 1] = arguments[_i];
+    }
+    // @ts-ignore
+    return newComers.reduce(function (result, newComer) {
+        return mergeRecursively(result, newComer, concatArrays);
+    }, origin);
 }
 
-export { concatArrays, merge };
+export { concatArrays, merge, mergeAndCompare, mergeAndConcat };

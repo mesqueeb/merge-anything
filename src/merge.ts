@@ -1,21 +1,9 @@
-import { Object as ObjectTs } from 'ts-toolbelt'
+import { O } from 'ts-toolbelt'
 import { isPlainObject, isSymbol } from 'is-what'
+import { concatArrays } from './extensions'
 
 // @ts-ignore
 type PlainObject = { [key: string | symbol]: any }
-
-// type IsPlainObject<T> = T extends PlainObject ? true : false
-
-// type Assign<T1, T2> = [IsPlainObject<T1>, IsPlainObject<T2>] extends [true, true]
-//   ? ObjectTs.Merge<T1, T2>
-//   : T2
-
-// type Merged<T, U extends any[]> = {
-//   0: T
-//   1: ((...t: U) => any) extends (head: infer Head, ...tail: infer Tail) => any
-//     ? Merged<Assign<T, Head>, Tail>
-//     : never
-// }[U['length'] extends 0 ? 0 : 1]
 
 function assignProp (
   carry: PlainObject,
@@ -39,7 +27,8 @@ function assignProp (
 
 function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject | any> (
   origin: T1,
-  newComer: T2
+  newComer: T2,
+  compareFn?: (prop1: any, prop2: any, propName: string | symbol) => any
 ): (T1 & T2) | T2 {
   // always return newComer if its not an object
   if (!isPlainObject(newComer)) return newComer
@@ -68,9 +57,10 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
     const targetVal = isPlainObject(origin) ? origin[key] : undefined
     // When newVal is an object do the merge recursively
     if (targetVal !== undefined && isPlainObject(newVal)) {
-      newVal = mergeRecursively(targetVal, newVal)
+      newVal = mergeRecursively(targetVal, newVal, compareFn)
     }
-    assignProp(carry, key, newVal, newComer)
+    const propToAssign = compareFn ? compareFn(targetVal, newVal, key) : newVal
+    assignProp(carry, key, propToAssign, newComer)
     return carry
   }, newObject)
   return result
@@ -91,24 +81,30 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
 export function merge<T extends PlainObject, Tn extends PlainObject[]> (
   origin: T,
   ...newComers: Tn
-): ObjectTs.Assign<T, Tn> {
+): O.Assign<T, Tn, 'deep'> {
   // @ts-ignore
   return newComers.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, origin)
 }
 
-// export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
-//   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
-//   origin: T,
-//   ...newComers: Tn
-// ): Merged<T, Tn> {
+export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
+  compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
+  origin: T,
+  ...newComers: Tn
+): O.Assign<T, Tn, 'deep'> {
+  // @ts-ignore
+  return newComers.reduce((result, newComer) => {
+    return mergeRecursively(result, newComer, compareFn)
+  }, origin)
+}
 
-// }
-
-// export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
-//   origin: T,
-//   ...newComers: Tn
-// ): Merged<T, Tn> {
-
-// }
+export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
+  origin: T,
+  ...newComers: Tn
+): O.Assign<T, Tn, 'deep'> {
+  // @ts-ignore
+  return newComers.reduce((result, newComer) => {
+    return mergeRecursively(result, newComer, concatArrays)
+  }, origin)
+}

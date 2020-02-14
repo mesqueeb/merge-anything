@@ -1,8 +1,7 @@
 import test from 'ava'
 import { isDate } from 'is-what'
 import { merge } from '../src/index'
-// import copy from 'copy-anything'
-// const copy = require('copy')
+
 function copy<T> (any: T): T {
   return JSON.parse(JSON.stringify(any))
 }
@@ -84,6 +83,7 @@ test('origin and target are not modified', t => {
   t.deepEqual(origin, { body: '', head: null, toes: { big: true }, fingers: { '12': false } })
   t.deepEqual(target, { body: {}, head: {}, toes: {}, fingers: null })
   origin.body = 'a'
+  // @ts-ignore
   origin.head = 'a'
   // @ts-ignore
   origin.toes.big = 'a'
@@ -91,7 +91,9 @@ test('origin and target are not modified', t => {
   origin.fingers['12'] = 'a'
   target.body = 'b'
   target.head = 'b'
+  // @ts-ignore
   target.toes = 'b'
+  // @ts-ignore
   target.fingers = 'b'
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
   // @ts-ignore
@@ -334,4 +336,18 @@ test('nonenumerable keys', t => {
   t.is(Object.keys(res).length, 2)
   t.true(Object.keys(res).includes('value'))
   t.true(Object.keys(res).includes('other'))
+})
+
+test('readme', t => {
+  const starter = { name: 'Squirtle', types: { water: true } }
+  const newValues = { name: 'Wartortle', types: { fighting: true }, level: 16 }
+
+  const evolution = merge(starter, newValues, { is: 'cool' })
+
+  t.deepEqual(evolution, {
+    name: 'Wartortle',
+    types: { water: true, fighting: true },
+    level: 16,
+    is: 'cool',
+  })
 })

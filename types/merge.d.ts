@@ -1,4 +1,4 @@
-import { Object as ObjectTs } from 'ts-toolbelt';
+import { O } from 'ts-toolbelt';
 declare type PlainObject = {
     [key: string | symbol]: any;
 };
@@ -14,5 +14,7 @@ declare type PlainObject = {
  * @param {...Tn} newComers
  * @returns {Assigned<T, Tn>}
  */
-export declare function merge<T extends PlainObject, Tn extends PlainObject[]>(origin: T, ...newComers: Tn): ObjectTs.Assign<T, Tn>;
+export declare function merge<T extends PlainObject, Tn extends PlainObject[]>(origin: T, ...newComers: Tn): O.Assign<T, Tn, 'deep'>;
+export declare function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]>(compareFn: (prop1: any, prop2: any, propName: string | symbol) => any, origin: T, ...newComers: Tn): O.Assign<T, Tn, 'deep'>;
+export declare function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]>(origin: T, ...newComers: Tn): O.Assign<T, Tn, 'deep'>;
 export {};
