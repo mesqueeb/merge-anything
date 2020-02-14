@@ -56,7 +56,7 @@ const evolution = merge(starter, newValues, { is: 'cool' })
 
 In the example above, if you are using TypeScript, and you hover over `evolution`, you can actually see the type of your new object right then and there. This is very powerful, because you can merge things, and without needing `any`, TypeScript will know exactly how your newly merged objects look!
 
-![typescript support](./github/typescript-support.png)
+![typescript support](https://raw.githubusercontent.com/mesqueeb/merge-anything/master/.github/typescript-support.png)
 
 ## Rules
 
