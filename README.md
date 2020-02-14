@@ -97,16 +97,17 @@ However, it's **very important** you understand how to work around JavaScript ob
 
 The default behaviour is that arrays are overwritten. You can import `mergeAndConcat` if you need to concatenate arrays. But don't worry if you don't need this, this library is tree-shakable and won't import code you don't use!
 
+<!-- prettier-ignore-start -->
 ```js
 import { mergeAndConcat } from 'merge-anything'
 
-merge(
-  { extensions: [concatArrays] }, // pass your extensions like so
+mergeAndConcat(
   { nested: { prop: { array: ['a'] } } },
   { nested: { prop: { array: ['b'] } } }
 )
 // returns { nested: { prop: { array: ['a', 'b'] } } },
 ```
+<!-- prettier-ignore-end -->
 
 ## Compare Function when a value is merged
 
