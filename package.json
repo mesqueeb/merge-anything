@@ -1,6 +1,7 @@
 {
   "name": "merge-anything",
-  "version": "3.0.0",
+  "version": "3.0.1",
+  "sideEffects": false,
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -60,11 +61,7 @@
     "typescript": "^3.7.5"
   },
   "ava": {
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ]
+    "extensions": ["ts"],
+    "require": ["ts-node/register"]
   }
 }
