@@ -78,31 +78,31 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
  * @param {...Tn} newComers
  * @returns {Assigned<T, Tn>}
  */
-export function merge<T extends PlainObject, Tn extends PlainObject[]> (
+export function merge<T extends object, Tn extends object[]> (
   origin: T,
   ...newComers: Tn
-): O.Assign<T, Tn, 'deep'> {
+): O.Compact<T, Tn, 'deep'> {
   // @ts-ignore
   return newComers.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, origin)
 }
 
-export function mergeAndCompare<T extends PlainObject, Tn extends PlainObject[]> (
+export function mergeAndCompare<T extends object, Tn extends object[]> (
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
   origin: T,
   ...newComers: Tn
-): O.Assign<T, Tn, 'deep'> {
+): O.Compact<T, Tn, 'deep'> {
   // @ts-ignore
   return newComers.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
   }, origin)
 }
 
-export function mergeAndConcat<T extends PlainObject, Tn extends PlainObject[]> (
+export function mergeAndConcat<T extends object, Tn extends object[]> (
   origin: T,
   ...newComers: Tn
-): O.Assign<T, Tn, 'deep'> {
+): O.Compact<T, Tn, 'deep'> {
   // @ts-ignore
   return newComers.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)

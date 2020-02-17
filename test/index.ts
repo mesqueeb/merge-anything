@@ -73,12 +73,14 @@ test('1. works with multiple levels | 2. overwrites entire object with null', t 
   const origin = { body: '', head: null, toes: { big: true }, fingers: { '12': false } }
   const target = { body: {}, head: {}, toes: {}, fingers: null }
   const res = merge(origin, target)
+  // @ts-ignore
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
 })
 test('origin and target are not modified', t => {
   const origin = { body: '', head: null, toes: { big: true }, fingers: { '12': false } }
   const target = { body: {}, head: {}, toes: {}, fingers: null }
   const res = merge(origin, target)
+  // @ts-ignore
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
   t.deepEqual(origin, { body: '', head: null, toes: { big: true }, fingers: { '12': false } })
   t.deepEqual(target, { body: {}, head: {}, toes: {}, fingers: null })
@@ -95,6 +97,7 @@ test('origin and target are not modified', t => {
   target.toes = 'b'
   // @ts-ignore
   target.fingers = 'b'
+  // @ts-ignore
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
   // @ts-ignore
   t.deepEqual(origin, { body: 'a', head: 'a', toes: { big: 'a' }, fingers: { '12': 'a' } })
@@ -109,23 +112,17 @@ test('Overwrite arrays', t => {
   t.deepEqual(res, { array: ['b'] })
 })
 test('overwrites null with empty object', t => {
-  const origin = {
-    body: null,
-  }
-  const target = {
-    body: {},
-  }
+  const origin = { body: null }
+  const target = { body: {} }
   const res = merge(origin, target)
+  // @ts-ignore
   t.deepEqual(res, { body: {} })
 })
 test('overwrites null with object with props', t => {
-  const origin = {
-    body: null,
-  }
-  const target = {
-    body: { props: true },
-  }
+  const origin = { body: null }
+  const target = { body: { props: true } }
   const res = merge(origin, target)
+  // @ts-ignore
   t.deepEqual(res, { body: { props: true } })
 })
 test('overwrites string values', t => {
@@ -142,21 +139,13 @@ test('works with very deep props & dates', t => {
     info: {
       time: 'now',
       newDate,
-      very: {
-        deep: {
-          prop: false,
-        },
-      },
+      very: { deep: { prop: false } },
     },
   }
   const target = {
     info: {
       date: 'tomorrow',
-      very: {
-        deep: {
-          prop: true,
-        },
-      },
+      very: { deep: { prop: true } },
     },
   }
   const res = merge(origin, target)
@@ -166,28 +155,20 @@ test('works with very deep props & dates', t => {
       time: 'now',
       newDate,
       date: 'tomorrow',
-      very: {
-        deep: {
-          prop: true,
-        },
-      },
+      very: { deep: { prop: true } },
     },
   })
   t.deepEqual(origin, {
     info: {
       time: 'now',
       newDate,
-      very: {
-        deep: { prop: false },
-      },
+      very: { deep: { prop: false } },
     },
   })
   t.deepEqual(target, {
     info: {
       date: 'tomorrow',
-      very: {
-        deep: { prop: true },
-      },
+      very: { deep: { prop: true } },
     },
   })
   // @ts-ignore
@@ -197,9 +178,7 @@ test('1. does not overwrite origin prop if target prop is an empty object | 2. p
   const origin = {
     info: {
       time: { when: 'now' },
-      very: {
-        deep: { prop: false },
-      },
+      very: { deep: { prop: false } },
     },
   }
   const target = {
@@ -232,7 +211,9 @@ test('overwrites any origin prop when target prop is an object with props', t =>
   }
   const res = merge(origin, target)
   t.deepEqual(res, {
+    // @ts-ignore
     body: { head: true },
+    // @ts-ignore
     body2: { head: { eyes: true } },
     tail: {},
   })
@@ -246,22 +227,7 @@ test('overwrites any origin prop when target prop is an object with props', t =>
     body2: { head: { eyes: true } },
   })
 })
-test('overwrites entire objects when target val is a simple string', t => {
-  const origin = {
-    body: 'a',
-    body2: { head: false },
-    tail: {},
-  }
-  const target = 'a'
-  const res = merge(origin, target)
-  // @ts-ignore
-  t.is(res, 'a')
-  t.deepEqual(origin, {
-    body: 'a',
-    body2: { head: false },
-    tail: {},
-  })
-})
+
 test('works with unlimited depth', t => {
   const date = new Date()
   const origin = { origin: 'a', t2: false, t3: {}, t4: 'false' }
@@ -270,6 +236,7 @@ test('works with unlimited depth', t => {
   const t3 = { t3: 'new' }
   const t4 = { t4: 'new', t3: {} }
   const res = merge(origin, t1, t2, t3, t4)
+  // @ts-ignore
   t.deepEqual(res, { origin: 'a', t1: date, t2: 'new', t3: {}, t4: 'new' })
   t.deepEqual(origin, { origin: 'a', t2: false, t3: {}, t4: 'false' })
   t.deepEqual(t1, { t1: date })
