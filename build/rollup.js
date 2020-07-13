@@ -20,7 +20,9 @@ const pkg = require('../package.json')
 const name = pkg.name
 const className = name.replace(/(^\w|-\w)/g, c => c.replace('-', '').toUpperCase())
 const external = Object.keys(pkg.dependencies || [])
-const plugins = [typescript({ useTsconfigDeclarationDir: true })]
+const plugins = [
+  typescript({ useTsconfigDeclarationDir: true, tsconfigOverride: { exclude: ['test/**/*'] } }),
+]
 
 // ------------------------------------------------------------------------------------------
 // Builds

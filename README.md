@@ -68,11 +68,13 @@ This package will recursively go through plain objects and merge the values onto
 // all passed objects do not get modified
 const a = { a: 'a' }
 const b = { b: 'b' }
-const c = merge(a, b)
+const c = { c: 'c' }
+const result = merge(a, b, c)
 // a === {a: 'a'}
 // b === {b: 'b'}
-// c === {a: 'a', b: 'b'}
-// However, be careful with JavaScript object references. See below: A note on JavaScript object references
+// c === {c: 'c'}
+// result === {a: 'a', b: 'b', c: 'c'}
+// However, be careful with JavaScript object references with nested props. See below: A note on JavaScript object references
 
 // arrays get overwritten
 // (for "concat" logic, see Extensions below)
@@ -83,7 +85,6 @@ merge({ obj: { prop: 'a' } }, { obj: {} }) // returns {obj: {prop: 'a'}}
 
 // but non-objects overwrite objects
 merge({ obj: { prop: 'a' } }, { obj: null }) // returns {obj: null}
-merge({ obj: 'a' }, 'b') // returns 'b'
 
 // and empty objects overwrite non-objects
 merge({ prop: 'a' }, { prop: {} }) // returns {prop: {}}
@@ -113,9 +114,11 @@ mergeAndConcat(
 
 There might be times you need to tweak the logic when two things are merged. You can provide your own custom function that's triggered every time a value is overwritten.
 
-Here is an example with a compare function that concatenates strings:
+For this case we use `mergeAndCompare`. Here is an example with a compare function that concatenates strings:
 
 ```js
+import { mergeAndCompare } from 'merge-anything'
+
 function concatStrings (originVal, newVal, key) {
   if (typeof originVal === 'string' && typeof newVal === 'string') {
     // concat logic
@@ -136,18 +139,18 @@ mergeAndCompare(concatStrings, { name: 'John' }, { name: 'Simth' })
 Be careful for JavaScript object reference. Any property that's nested will be reactive and linked between the original and the merged objects! Down below we'll show how to prevent this.
 
 ```js
-const original = { airport: { airplane: 'dep. 🛫' } }
+const original = { airport: { status: 'dep. 🛫' } }
 const extraInfo = { airport: { location: 'Brussels' } }
 const merged = merge(original, extraInfo)
 
-// we change the airplane from departuring 🛫 to landing 🛬
-merged.airport.airplane = 'lan. 🛬'
+// we change the status from departuring 🛫 to landing 🛬
+merged.airport.status = 'lan. 🛬'
 
 // the `merged` value will be modified
-// merged.airport.airplane === 'lan. 🛬'
+// merged.airport.status === 'lan. 🛬'
 
 // However `original` value will also be modified!!
-// original.airport.airplane === 'lan. 🛬'
+// original.airport.status === 'lan. 🛬'
 ```
 
 The key rule to remember is:
@@ -161,15 +164,15 @@ See below how we integrate 'copy-anything':
 ```js
 import copy from 'copy-anything'
 
-const original = { airport: { airplane: 'dep. 🛫' } }
+const original = { airport: { status: 'dep. 🛫' } }
 const extraInfo = { airport: { location: 'Brussels' } }
 const merged = copy(merge(original, extraInfo))
 
-// we change the airplane from departuring 🛫 to landing 🛬
-merged.airport.airplane = 'lan. 🛬'(merged.airport.airplane === 'lan. 🛬')(
+// we change the status from departuring 🛫 to landing 🛬
+merged.airport.status = 'lan. 🛬'(merged.airport.status === 'lan. 🛬')(
   // true
   // `original` won't be modified!
-  original.airport.airplane === 'dep. 🛫'
+  original.airport.status === 'dep. 🛫'
 ) // true
 ```
 
