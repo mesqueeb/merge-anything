@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "sideEffects": false,
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
@@ -46,7 +46,7 @@
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
   "dependencies": {
     "is-what": "^3.10.0",
-    "ts-toolbelt": "^6.12.1"
+    "ts-toolbelt": "6.12.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.34.0",

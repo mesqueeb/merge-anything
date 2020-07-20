@@ -5,3 +5,4 @@ node_modules/
 .env.js
 .rpt2_cache
 .DS_Store
+_playground.*
