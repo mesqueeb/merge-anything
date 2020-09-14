@@ -3,7 +3,7 @@ import { isDate, isString, isArray, isObject } from 'is-what'
 import { mergeAndCompare } from '../src/index'
 
 test('conversion based on original val', t => {
-  function convertTimestamps (originVal, targetVal) {
+  function convertTimestamps (originVal: any, targetVal: any) {
     if (originVal === '%convertTimestamp%' && isString(targetVal) && isDate(new Date(targetVal))) {
       return new Date(targetVal)
     }
@@ -23,7 +23,7 @@ test('conversion based on original val', t => {
   // t.deepEqual(res2, new Date('1990-06-22'))
 })
 test('conversion based on prop key', t => {
-  function convertTimestamps (originVal, targetVal, key) {
+  function convertTimestamps (originVal: any, targetVal: any, key: any) {
     if (isString(targetVal) && key === 'date') {
       return new Date(targetVal)
     }
@@ -42,7 +42,7 @@ test('conversion based on prop key', t => {
   t.deepEqual(res, { date: new Date('1990-06-22'), a: { date: new Date('1990-01-01') } })
 })
 test('Extend with custom concat arrays', t => {
-  function concatArr (originVal, targetVal) {
+  function concatArr (originVal: any, targetVal: any) {
     if (isArray(originVal) && isArray(targetVal)) {
       return originVal.concat(targetVal)
     }

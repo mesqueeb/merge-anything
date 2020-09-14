@@ -85,43 +85,38 @@ function mergeRecursively(origin, newComer, compareFn) {
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
- *
- * @export
- * @template T
- * @template Tn
- * @param {T} origin
- * @param {...Tn} newComers
- * @returns {Assigned<T, Tn>}
+ * @param object
+ * @param otherObjects
  */
-function merge(origin) {
-    var newComers = [];
+function merge(object) {
+    var otherObjects = [];
     for (var _i = 1; _i < arguments.length; _i++) {
-        newComers[_i - 1] = arguments[_i];
+        otherObjects[_i - 1] = arguments[_i];
     }
     // @ts-ignore
-    return newComers.reduce(function (result, newComer) {
+    return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer);
-    }, origin);
+    }, object);
 }
-function mergeAndCompare(compareFn, origin) {
-    var newComers = [];
+function mergeAndCompare(compareFn, object) {
+    var otherObjects = [];
     for (var _i = 2; _i < arguments.length; _i++) {
-        newComers[_i - 2] = arguments[_i];
+        otherObjects[_i - 2] = arguments[_i];
     }
     // @ts-ignore
-    return newComers.reduce(function (result, newComer) {
+    return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer, compareFn);
-    }, origin);
+    }, object);
 }
-function mergeAndConcat(origin) {
-    var newComers = [];
+function mergeAndConcat(object) {
+    var otherObjects = [];
     for (var _i = 1; _i < arguments.length; _i++) {
-        newComers[_i - 1] = arguments[_i];
+        otherObjects[_i - 1] = arguments[_i];
     }
     // @ts-ignore
-    return newComers.reduce(function (result, newComer) {
+    return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer, concatArrays);
-    }, origin);
+    }, object);
 }
 
 export { concatArrays, merge, mergeAndCompare, mergeAndConcat };

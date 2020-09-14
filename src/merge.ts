@@ -1,14 +1,12 @@
-import { O } from 'ts-toolbelt'
+import { A, O } from 'ts-toolbelt'
 import { isPlainObject, isSymbol } from 'is-what'
 import { concatArrays } from './extensions'
 
-type PlainObject = { [key: string]: any }
-
 function assignProp(
-  carry: PlainObject,
+  carry: Record<string, any>,
   key: string,
   newVal: any,
-  originalObject: PlainObject
+  originalObject: Record<string, any>
 ): void {
   const propType = {}.propertyIsEnumerable.call(originalObject, key)
     ? 'enumerable'
@@ -24,7 +22,7 @@ function assignProp(
   }
 }
 
-function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject | any>(
+function mergeRecursively<T1 extends Record<string, any> | any, T2 extends Record<string, any> | any>(
   origin: T1,
   newComer: T2,
   compareFn?: (prop1: any, prop2: any, propName: string) => any
@@ -42,7 +40,7 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
         (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
         (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
       ) {
-        assignProp(carry as PlainObject, key as string, targetVal, origin)
+        assignProp(carry as Record<string, any>, key as string, targetVal, origin)
       }
       return carry
     }, {} as (T1 & T2) | T2)
@@ -59,7 +57,7 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
       newVal = mergeRecursively(targetVal, newVal, compareFn)
     }
     const propToAssign = compareFn ? compareFn(targetVal, newVal, key as string) : newVal
-    assignProp(carry as PlainObject, key as string, propToAssign, newComer)
+    assignProp(carry as Record<string, any>, key as string, propToAssign, newComer)
     return carry
   }, newObject)
   return result
@@ -69,41 +67,36 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
- *
- * @export
- * @template T
- * @template Tn
- * @param {T} origin
- * @param {...Tn} newComers
- * @returns {Assigned<T, Tn>}
+ * @param object
+ * @param otherObjects
  */
-export function merge<T extends object, Tn extends object[]>(
-  origin: T,
-  ...newComers: Tn
-): O.Compact<T, Tn, 'deep'> {
+export function merge<T extends Record<string, any>, Tn extends Record<string, any>[]>(
+  object: T,
+  ...otherObjects: Tn
+):  A.Compute<O.PatchAll<T, Tn, 'deep'>> {
   // @ts-ignore
-  return newComers.reduce((result, newComer) => {
+  return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
-  }, origin)
+  }, object)
 }
 
-export function mergeAndCompare<T extends object, Tn extends object[]>(
+export function mergeAndCompare<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
-  origin: T,
-  ...newComers: Tn
-): O.Compact<T, Tn, 'deep'> {
+  object: T,
+  ...otherObjects: Tn
+):  A.Compute<O.PatchAll<T, Tn, 'deep'>> {
   // @ts-ignore
-  return newComers.reduce((result, newComer) => {
+  return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
-  }, origin)
+  }, object)
 }
 
-export function mergeAndConcat<T extends object, Tn extends object[]>(
-  origin: T,
-  ...newComers: Tn
-): O.Compact<T, Tn, 'deep'> {
+export function mergeAndConcat<T extends Record<string, any>, Tn extends Record<string, any>[]>(
+  object: T,
+  ...otherObjects: Tn
+):  A.Compute<O.PatchAll<T, Tn, 'deep'>> {
   // @ts-ignore
-  return newComers.reduce((result, newComer) => {
+  return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)
-  }, origin)
+  }, object)
 }

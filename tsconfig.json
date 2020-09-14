@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "declaration": true,
     "declarationDir": "./types/",
-    "strictNullChecks": true
+    "strict": true
   },
   "include": [
     "src/**/*",

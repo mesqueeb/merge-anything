@@ -299,6 +299,7 @@ test('nonenumerable keys', t => {
   t.is(res.xid, 1)
   // @ts-ignore
   t.is(res.yid, 2)
+  // @ts-ignore
   t.is(res[mySymbol], 'new')
   t.is(Object.keys(res).length, 2)
   t.true(Object.keys(res).includes('value'))
