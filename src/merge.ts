@@ -1,4 +1,4 @@
-import { A, O } from 'ts-toolbelt'
+import { O } from 'ts-toolbelt'
 import { isPlainObject, isSymbol } from 'is-what'
 import { concatArrays } from './extensions'
 
@@ -22,7 +22,10 @@ function assignProp(
   }
 }
 
-function mergeRecursively<T1 extends Record<string, any> | any, T2 extends Record<string, any> | any>(
+function mergeRecursively<
+  T1 extends Record<string, any> | any,
+  T2 extends Record<string, any> | any
+>(
   origin: T1,
   newComer: T2,
   compareFn?: (prop1: any, prop2: any, propName: string) => any
@@ -73,7 +76,7 @@ function mergeRecursively<T1 extends Record<string, any> | any, T2 extends Recor
 export function merge<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   object: T,
   ...otherObjects: Tn
-):  A.Compute<O.Assign<T, Tn, 'deep'>> {
+): O.Assign<T, Tn, 'deep'> {
   // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
@@ -84,7 +87,7 @@ export function mergeAndCompare<T extends Record<string, any>, Tn extends Record
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
-):  A.Compute<O.Assign<T, Tn, 'deep'>> {
+): O.Assign<T, Tn, 'deep'> {
   // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
@@ -94,7 +97,7 @@ export function mergeAndCompare<T extends Record<string, any>, Tn extends Record
 export function mergeAndConcat<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   object: T,
   ...otherObjects: Tn
-):  A.Compute<O.Assign<T, Tn, 'deep'>> {
+): O.Assign<T, Tn, 'deep'> {
   // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)

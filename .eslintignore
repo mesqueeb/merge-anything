@@ -6,3 +6,4 @@ dist
 coverage
 
 test
+.eslintrc.js

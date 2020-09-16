@@ -16,8 +16,7 @@ test('conversion based on original val', t => {
     date: '1990-06-22',
   }
   const res = mergeAndCompare(convertTimestamps, origin, target)
-  // @ts-ignore
-  t.deepEqual(res, { date: new Date('1990-06-22') })
+  t.deepEqual(res as any, { date: new Date('1990-06-22') })
   // doesn't work on base lvl anymore
   // const res2 = mergeAndCompare(convertTimestamps, '%convertTimestamp%', '1990-06-22')
   // t.deepEqual(res2, new Date('1990-06-22'))
@@ -38,8 +37,7 @@ test('conversion based on prop key', t => {
     a: { date: '1990-01-01' },
   }
   const res = mergeAndCompare(convertTimestamps, origin, target)
-  // @ts-ignore
-  t.deepEqual(res, { date: new Date('1990-06-22'), a: { date: new Date('1990-01-01') } })
+  t.deepEqual(res as any, { date: new Date('1990-06-22'), a: { date: new Date('1990-01-01') } })
 })
 test('Extend with custom concat arrays', t => {
   function concatArr (originVal: any, targetVal: any) {

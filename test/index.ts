@@ -20,14 +20,14 @@ test('adding a prop on target1|target2|mergedObj', t => {
   const target = { nested: {} }
   const res = merge(origin, target)
   t.deepEqual(res, { nested: {} })
-  // @ts-ignore
-  origin.nested.a = ''
-  // @ts-ignore
-  target.nested.b = ''
-  // @ts-ignore
-  res.nested.c = ''
-  t.deepEqual(origin, { nested: { a: '' } })
-  t.deepEqual(target, { nested: { b: '' } })
+  const originAsAny: any = origin
+  const targetAsAny: any = target
+  const resAsAny: any = res
+  originAsAny.nested.a = ''
+  targetAsAny.nested.b = ''
+  resAsAny.nested.c = ''
+  t.deepEqual(originAsAny, { nested: { a: '' } })
+  t.deepEqual(targetAsAny, { nested: { b: '' } })
   t.deepEqual(res, { nested: { c: '' } })
 })
 test('changing a prop on target1|target2|mergedObj: failing example', t => {
@@ -39,14 +39,14 @@ test('changing a prop on target1|target2|mergedObj: failing example', t => {
   t.deepEqual(origin, { nested: { a: 2 } }) // linked
   t.deepEqual(target, {})
   t.deepEqual(res, { nested: { a: 2 } }) // linked
-  // @ts-ignore
-  target.nested = { a: 3 }
+  const targetAsAny: any = target
+  targetAsAny.nested = { a: 3 }
   t.deepEqual(origin, { nested: { a: 2 } }) // not changed
-  t.deepEqual(target, { nested: { a: 3 } })
+  t.deepEqual(targetAsAny, { nested: { a: 3 } })
   t.deepEqual(res, { nested: { a: 2 } }) // not changed
   res.nested.a = 4
   t.deepEqual(origin, { nested: { a: 4 } }) // linked
-  t.deepEqual(target, { nested: { a: 3 } })
+  t.deepEqual(targetAsAny, { nested: { a: 3 } })
   t.deepEqual(res, { nested: { a: 4 } }) // linked
 })
 test('changing a prop on target1|target2|mergedObj: working example', t => {
@@ -59,14 +59,14 @@ test('changing a prop on target1|target2|mergedObj: working example', t => {
   t.deepEqual(origin, { nested: { a: 2 } }) // not linked
   t.deepEqual(target, {})
   t.deepEqual(res, { nested: { a: 1 } }) // not linked
-  // @ts-ignore
-  target.nested = { a: 3 }
+  const targetAsAny: any = target
+  targetAsAny.nested = { a: 3 }
   t.deepEqual(origin, { nested: { a: 2 } }) // not changed
-  t.deepEqual(target, { nested: { a: 3 } })
+  t.deepEqual(targetAsAny, { nested: { a: 3 } })
   t.deepEqual(res, { nested: { a: 1 } }) // not changed
   res.nested.a = 4
   t.deepEqual(origin, { nested: { a: 2 } }) // not linked
-  t.deepEqual(target, { nested: { a: 3 } })
+  t.deepEqual(targetAsAny, { nested: { a: 3 } })
   t.deepEqual(res, { nested: { a: 4 } }) // not linked
 })
 test('1. works with multiple levels | 2. overwrites entire object with null', t => {
@@ -75,7 +75,7 @@ test('1. works with multiple levels | 2. overwrites entire object with null', t 
   const res = merge(origin, target)
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
 })
-test('origin and target are not modified', t => {
+test('origin and target are not AsAny', t => {
   const origin = { body: '', head: null, toes: { big: true }, fingers: { '12': false } }
   const target = { body: {}, head: {}, toes: {}, fingers: null }
   const res = merge(origin, target)
@@ -83,25 +83,19 @@ test('origin and target are not modified', t => {
   t.deepEqual(origin, { body: '', head: null, toes: { big: true }, fingers: { '12': false } })
   t.deepEqual(target, { body: {}, head: {}, toes: {}, fingers: null })
   origin.body = 'a'
-  // @ts-ignore
-  origin.head = 'a'
-  // @ts-ignore
-  origin.toes.big = 'a'
-  // @ts-ignore
-  origin.fingers['12'] = 'a'
-  target.body = 'b'
-  target.head = 'b'
-  // @ts-ignore
-  target.toes = 'b'
-  // @ts-ignore
-  target.fingers = 'b'
+  const originAsAny: any = origin
+  const targetAsAny: any = target
+  originAsAny.head = 'a'
+  originAsAny.toes.big = 'a'
+  originAsAny.fingers['12'] = 'a'
+  targetAsAny.body = 'b'
+  targetAsAny.head = 'b'
+  targetAsAny.toes = 'b'
+  targetAsAny.fingers = 'b'
   t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
-  // @ts-ignore
-  t.deepEqual(origin, { body: 'a', head: 'a', toes: { big: 'a' }, fingers: { '12': 'a' } })
-  // @ts-ignore
-  t.deepEqual(target, { body: 'b', head: 'b', toes: 'b', fingers: 'b' })
+  t.deepEqual(originAsAny, { body: 'a', head: 'a', toes: { big: 'a' }, fingers: { '12': 'a' } })
+  t.deepEqual(targetAsAny, { body: 'b', head: 'b', toes: 'b', fingers: 'b' })
 })
-
 test('Overwrite arrays', t => {
   const origin = { array: ['a'] }
   const target = { array: ['b'] }
@@ -284,12 +278,9 @@ test('nonenumerable keys', t => {
   const res = merge(x, y)
   t.is(res.value, 42)
   t.is(res.other, 33)
-  // @ts-ignore
-  t.is(res.xid, 1)
-  // @ts-ignore
-  t.is(res.yid, 2)
-  // @ts-ignore
-  t.is(res[mySymbol], 'new')
+  t.is((res as any).xid, 1)
+  t.is((res as any).yid, 2)
+  t.is((res as any)[mySymbol], 'new')
   t.is(Object.keys(res).length, 2)
   t.true(Object.keys(res).includes('value'))
   t.true(Object.keys(res).includes('other'))
@@ -298,9 +289,7 @@ test('nonenumerable keys', t => {
 test('readme', t => {
   const starter = { name: 'Squirtle', types: { water: true } }
   const newValues = { name: 'Wartortle', types: { fighting: true }, level: 16 }
-
   const evolution = merge(starter, newValues, { is: 'cool' })
-
   t.deepEqual(evolution, {
     name: 'Wartortle',
     types: { water: true, fighting: true },
