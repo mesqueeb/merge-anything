@@ -38,12 +38,12 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
     const props = Object.getOwnPropertyNames(origin)
     const symbols = Object.getOwnPropertySymbols(origin)
     newObject = [...props, ...symbols].reduce((carry, key) => {
-      const targetVal = origin[key]
+      const targetVal = origin[key as any]
       if (
         (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
         (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
       ) {
-        assignProp(carry, key, targetVal, origin)
+        assignProp(carry as any, key, targetVal, origin)
       }
       return carry
     }, {} as (T1 & T2) | T2)
@@ -53,14 +53,14 @@ function mergeRecursively<T1 extends PlainObject | any, T2 extends PlainObject |
   const symbols = Object.getOwnPropertySymbols(newComer)
   const result = [...props, ...symbols].reduce((carry, key) => {
     // re-define the origin and newComer as targetVal and newVal
-    let newVal = newComer[key]
-    const targetVal = isPlainObject(origin) ? origin[key] : undefined
+    let newVal = newComer[key as any]
+    const targetVal = isPlainObject(origin) ? origin[key as any] : undefined
     // When newVal is an object do the merge recursively
     if (targetVal !== undefined && isPlainObject(newVal)) {
       newVal = mergeRecursively(targetVal, newVal, compareFn)
     }
     const propToAssign = compareFn ? compareFn(targetVal, newVal, key) : newVal
-    assignProp(carry, key, propToAssign, newComer)
+    assignProp(carry as any, key, propToAssign, newComer)
     return carry
   }, newObject)
   return result
