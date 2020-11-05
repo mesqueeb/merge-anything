@@ -77,10 +77,9 @@ export function merge<T extends Record<string, any>, Tn extends Record<string, a
   object: T,
   ...otherObjects: Tn
 ): O.Assign<T, Tn, 'deep'> {
-  // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
-  }, object)
+  }, object) as any
 }
 
 export function mergeAndCompare<T extends Record<string, any>, Tn extends Record<string, any>[]>(
@@ -88,18 +87,16 @@ export function mergeAndCompare<T extends Record<string, any>, Tn extends Record
   object: T,
   ...otherObjects: Tn
 ): O.Assign<T, Tn, 'deep'> {
-  // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
-  }, object)
+  }, object) as any
 }
 
 export function mergeAndConcat<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   object: T,
   ...otherObjects: Tn
 ): O.Assign<T, Tn, 'deep'> {
-  // @ts-ignore
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)
-  }, object)
+  }, object) as any
 }

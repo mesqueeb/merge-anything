@@ -93,7 +93,6 @@ function merge(object) {
     for (var _i = 1; _i < arguments.length; _i++) {
         otherObjects[_i - 1] = arguments[_i];
     }
-    // @ts-ignore
     return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer);
     }, object);
@@ -103,7 +102,6 @@ function mergeAndCompare(compareFn, object) {
     for (var _i = 2; _i < arguments.length; _i++) {
         otherObjects[_i - 2] = arguments[_i];
     }
-    // @ts-ignore
     return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer, compareFn);
     }, object);
@@ -113,7 +111,6 @@ function mergeAndConcat(object) {
     for (var _i = 1; _i < arguments.length; _i++) {
         otherObjects[_i - 1] = arguments[_i];
     }
-    // @ts-ignore
     return otherObjects.reduce(function (result, newComer) {
         return mergeRecursively(result, newComer, concatArrays);
     }, object);
