@@ -94,7 +94,7 @@ merge({ prop: 'a' }, { prop: {} }) // returns {prop: {}}
 
 merge-anything properly keeps special objects intact like dates, regex, functions, class instances etc.
 
-However, it's **very important** you understand how to work around JavaScript object references. Please be sure to read [a note on JavaScript object references](#a-note-on-javascript-object-references) down below.
+However, it's **very important** you understand how to work around JavaScript object references. Please be sure to read [#a note on JavaScript object references](#a-note-on-javascript-object-references) down below.
 
 ## Concat arrays
 
