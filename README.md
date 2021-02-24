@@ -35,7 +35,9 @@ merge-anything will merge objects and nested properties, but only as long as the
 
 ## Usage
 
-Pass the base param first and then an unlimited amount of params to merge onto it.
+- Unlimited — Merge will merge an unlimited amount of plain objects you pass as the arguments
+- Nested — Nested objects are merged deeply (see example below)
+- No modification — Merge always returns a new object without modifying the original, but does keep object/array references for nested props (see [A note on JavaScript object references](#a-note-on-javascript-object-references))
 
 ```js
 import { merge } from 'merge-anything'
