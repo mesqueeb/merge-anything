@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "sideEffects": false,
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "main": "dist/index.cjs.js",
