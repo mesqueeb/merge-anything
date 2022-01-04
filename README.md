@@ -1,5 +1,8 @@
 # Merge anything 🥡
 
+<a href="https://www.npmjs.com/package/merge-anything"><img src="https://img.shields.io/npm/v/merge-anything.svg" alt="Total Downloads"></a>
+<a href="https://www.npmjs.com/package/merge-anything"><img src="https://img.shields.io/npm/dw/merge-anything.svg" alt="Latest Stable Version"></a>
+
 ```
 npm i merge-anything
 ```
