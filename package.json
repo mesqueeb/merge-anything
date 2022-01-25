@@ -2,7 +2,6 @@
   "name": "merge-anything",
   "version": "4.0.3",
   "sideEffects": false,
-  "type": "module",
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "module": "./dist/index.es.js",
   "main": "./dist/index.cjs",
@@ -17,10 +16,6 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=12.13",
-    "npm": ">=7"
-  },
   "scripts": {
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
