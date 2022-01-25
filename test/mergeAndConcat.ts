@@ -1,7 +1,7 @@
-import test from 'ava'
+import { test, expect } from 'vitest'
 import { mergeAndConcat } from '../src/index'
 
-test('mergeAndConcat', t => {
+test('mergeAndConcat', () => {
   const origin = {
     someArray: ['a'],
     a: { b: { c: ['x'] } },

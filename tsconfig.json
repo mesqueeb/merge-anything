@@ -1,17 +1,15 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "lib": ["ES2015", "ES2016", "ES2017", "ES2018", "ES2019", "ES2020"],
-    "strictNullChecks": true,
+    "module": "esnext",
+    "target": "es2019",
+    "lib": ["esnext", "DOM"],
     "strict": true,
+    "moduleResolution": "node",
     "isolatedModules": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
     "declaration": true,
-    "declarationDir": "./types/"
+    "declarationDir": "./dist/types/"
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ]
+  "include": ["src/**/*", "test/**/*"]
 }
