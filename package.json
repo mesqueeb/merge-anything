@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "sideEffects": false,
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "module": "./dist/index.es.js",
