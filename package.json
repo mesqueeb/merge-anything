@@ -22,7 +22,7 @@
     "npm": ">=7"
   },
   "scripts": {
-    "lint": "tsc --noEmit ./src/index.ts && eslint ./src --ext .ts",
+    "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
     "build": "rollup -c ./scripts/build.js",
     "release": "npm run lint && del dist && npm run build && np"
