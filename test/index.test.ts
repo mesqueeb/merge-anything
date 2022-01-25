@@ -2,7 +2,7 @@ import { test, expect } from 'vitest'
 import { isDate } from 'is-what'
 import { merge } from '../src/index'
 
-function copy<T> (any: T): T {
+function copy<T>(any: T): T {
   return JSON.parse(JSON.stringify(any))
 }
 
@@ -11,77 +11,77 @@ test('1. origin & target stays the same | 2. works with dates', () => {
   const origin = { body: 'a' }
   const target = { dueDate: nd }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: 'a', dueDate: nd })
-  t.deepEqual(origin, { body: 'a' })
-  t.deepEqual(target, { dueDate: nd })
+  expect(res).toEqual({ body: 'a', dueDate: nd })
+  expect(origin).toEqual({ body: 'a' })
+  expect(target).toEqual({ dueDate: nd })
 })
 test('adding a prop on target1|target2|mergedObj', () => {
   const origin = { nested: {} }
   const target = { nested: {} }
   const res = merge(origin, target)
-  t.deepEqual(res, { nested: {} })
+  expect(res).toEqual({ nested: {} })
   const originAsAny: any = origin
   const targetAsAny: any = target
   const resAsAny: any = res
   originAsAny.nested.a = ''
   targetAsAny.nested.b = ''
   resAsAny.nested.c = ''
-  t.deepEqual(originAsAny, { nested: { a: '' } })
-  t.deepEqual(targetAsAny, { nested: { b: '' } })
-  t.deepEqual(res, { nested: { c: '' } })
+  expect(originAsAny).toEqual({ nested: { a: '' } })
+  expect(targetAsAny).toEqual({ nested: { b: '' } })
+  expect(res).toEqual({ nested: { c: '' } })
 })
 test('changing a prop on target1|target2|mergedObj: failing example', () => {
   const origin = { nested: { a: 1 } }
   const target = {}
   const res = merge(origin, target)
-  t.deepEqual(res, { nested: { a: 1 } })
+  expect(res).toEqual({ nested: { a: 1 } })
   origin.nested.a = 2
-  t.deepEqual(origin, { nested: { a: 2 } }) // linked
-  t.deepEqual(target, {})
-  t.deepEqual(res, { nested: { a: 2 } }) // linked
+  expect(origin).toEqual({ nested: { a: 2 } }) // linked
+  expect(target).toEqual({})
+  expect(res).toEqual({ nested: { a: 2 } }) // linked
   const targetAsAny: any = target
   targetAsAny.nested = { a: 3 }
-  t.deepEqual(origin, { nested: { a: 2 } }) // not changed
-  t.deepEqual(targetAsAny, { nested: { a: 3 } })
-  t.deepEqual(res, { nested: { a: 2 } }) // not changed
+  expect(origin).toEqual({ nested: { a: 2 } }) // not changed
+  expect(targetAsAny).toEqual({ nested: { a: 3 } })
+  expect(res).toEqual({ nested: { a: 2 } }) // not changed
   res.nested.a = 4
-  t.deepEqual(origin, { nested: { a: 4 } }) // linked
-  t.deepEqual(targetAsAny, { nested: { a: 3 } })
-  t.deepEqual(res, { nested: { a: 4 } }) // linked
+  expect(origin).toEqual({ nested: { a: 4 } }) // linked
+  expect(targetAsAny).toEqual({ nested: { a: 3 } })
+  expect(res).toEqual({ nested: { a: 4 } }) // linked
 })
 test('changing a prop on target1|target2|mergedObj: working example', () => {
   const origin = { nested: { a: 1 } }
   const target = {}
   const merged = merge(origin, target)
   const res = copy(merged)
-  t.deepEqual(res, { nested: { a: 1 } })
+  expect(res).toEqual({ nested: { a: 1 } })
   origin.nested.a = 2
-  t.deepEqual(origin, { nested: { a: 2 } }) // not linked
-  t.deepEqual(target, {})
-  t.deepEqual(res, { nested: { a: 1 } }) // not linked
+  expect(origin).toEqual({ nested: { a: 2 } }) // not linked
+  expect(target).toEqual({})
+  expect(res).toEqual({ nested: { a: 1 } }) // not linked
   const targetAsAny: any = target
   targetAsAny.nested = { a: 3 }
-  t.deepEqual(origin, { nested: { a: 2 } }) // not changed
-  t.deepEqual(targetAsAny, { nested: { a: 3 } })
-  t.deepEqual(res, { nested: { a: 1 } }) // not changed
+  expect(origin).toEqual({ nested: { a: 2 } }) // not changed
+  expect(targetAsAny).toEqual({ nested: { a: 3 } })
+  expect(res).toEqual({ nested: { a: 1 } }) // not changed
   res.nested.a = 4
-  t.deepEqual(origin, { nested: { a: 2 } }) // not linked
-  t.deepEqual(targetAsAny, { nested: { a: 3 } })
-  t.deepEqual(res, { nested: { a: 4 } }) // not linked
+  expect(origin).toEqual({ nested: { a: 2 } }) // not linked
+  expect(targetAsAny).toEqual({ nested: { a: 3 } })
+  expect(res).toEqual({ nested: { a: 4 } }) // not linked
 })
 test('1. works with multiple levels | 2. overwrites entire object with null', () => {
   const origin = { body: '', head: null, toes: { big: true }, fingers: { '12': false } }
   const target = { body: {}, head: {}, toes: {}, fingers: null }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
+  expect(res).toEqual({ body: {}, head: {}, toes: { big: true }, fingers: null })
 })
 test('origin and target are not AsAny', () => {
   const origin = { body: '', head: null, toes: { big: true }, fingers: { '12': false } }
   const target = { body: {}, head: {}, toes: {}, fingers: null }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
-  t.deepEqual(origin, { body: '', head: null, toes: { big: true }, fingers: { '12': false } })
-  t.deepEqual(target, { body: {}, head: {}, toes: {}, fingers: null })
+  expect(res).toEqual({ body: {}, head: {}, toes: { big: true }, fingers: null })
+  expect(origin).toEqual({ body: '', head: null, toes: { big: true }, fingers: { '12': false } })
+  expect(target).toEqual({ body: {}, head: {}, toes: {}, fingers: null })
   origin.body = 'a'
   const originAsAny: any = origin
   const targetAsAny: any = target
@@ -92,35 +92,35 @@ test('origin and target are not AsAny', () => {
   targetAsAny.head = 'b'
   targetAsAny.toes = 'b'
   targetAsAny.fingers = 'b'
-  t.deepEqual(res, { body: {}, head: {}, toes: { big: true }, fingers: null })
-  t.deepEqual(originAsAny, { body: 'a', head: 'a', toes: { big: 'a' }, fingers: { '12': 'a' } })
-  t.deepEqual(targetAsAny, { body: 'b', head: 'b', toes: 'b', fingers: 'b' })
+  expect(res).toEqual({ body: {}, head: {}, toes: { big: true }, fingers: null })
+  expect(originAsAny).toEqual({ body: 'a', head: 'a', toes: { big: 'a' }, fingers: { '12': 'a' } })
+  expect(targetAsAny).toEqual({ body: 'b', head: 'b', toes: 'b', fingers: 'b' })
 })
 test('Overwrite arrays', () => {
   const origin = { array: ['a'] }
   const target = { array: ['b'] }
   const res = merge(origin, target)
-  t.deepEqual(res, { array: ['b'] })
+  expect(res).toEqual({ array: ['b'] })
 })
 test('overwrites null with empty object', () => {
   const origin = { body: null }
   const target = { body: {} }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: {} })
+  expect(res).toEqual({ body: {} })
 })
 test('overwrites null with object with props', () => {
   const origin = { body: null }
   const target = { body: { props: true } }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: { props: true } })
+  expect(res).toEqual({ body: { props: true } })
 })
 test('overwrites string values', () => {
   const origin = { body: 'a' }
   const target = { body: 'b' }
   const res = merge(origin, target)
-  t.deepEqual(res, { body: 'b' })
-  t.deepEqual(origin, { body: 'a' })
-  t.deepEqual(target, { body: 'b' })
+  expect(res).toEqual({ body: 'b' })
+  expect(origin).toEqual({ body: 'a' })
+  expect(target).toEqual({ body: 'b' })
 })
 test('works with very deep props & dates', () => {
   const newDate = new Date()
@@ -138,7 +138,7 @@ test('works with very deep props & dates', () => {
     },
   }
   const res = merge(origin, target)
-  t.deepEqual(res, {
+  expect(res).toEqual({
     info: {
       time: 'now',
       newDate,
@@ -146,20 +146,20 @@ test('works with very deep props & dates', () => {
       very: { deep: { prop: true } },
     },
   })
-  t.deepEqual(origin, {
+  expect(origin).toEqual({
     info: {
       time: 'now',
       newDate,
       very: { deep: { prop: false } },
     },
   })
-  t.deepEqual(target, {
+  expect(target).toEqual({
     info: {
       date: 'tomorrow',
       very: { deep: { prop: true } },
     },
   })
-  t.true(isDate(res.info.newDate))
+  expect(isDate(res.info.newDate)).toEqual(true)
 })
 test('1. does not overwrite origin prop if target prop is an empty object | 2. properly merges deep props', () => {
   const origin = {
@@ -175,7 +175,7 @@ test('1. does not overwrite origin prop if target prop is an empty object | 2. p
     },
   }
   const res = merge(origin, target)
-  t.deepEqual(res, {
+  expect(res).toEqual({
     info: {
       time: { when: 'now' },
       very: {
@@ -196,17 +196,17 @@ test('overwrites any origin prop when target prop is an object with props', () =
     body2: { head: { eyes: true } },
   }
   const res = merge(origin, target)
-  t.deepEqual(res, {
+  expect(res).toEqual({
     body: { head: true },
     body2: { head: { eyes: true } },
     tail: {},
   })
-  t.deepEqual(origin, {
+  expect(origin).toEqual({
     body: 'a',
     body2: { head: false },
     tail: {},
   })
-  t.deepEqual(target, {
+  expect(target).toEqual({
     body: { head: true },
     body2: { head: { eyes: true } },
   })
@@ -220,12 +220,12 @@ test('works with unlimited depth', () => {
   const t3 = { t3: 'new' }
   const t4 = { t4: 'new', t3: {} }
   const res = merge(origin, t1, t2, t3, t4)
-  t.deepEqual(res, { origin: 'a', t1: date, t2: 'new', t3: {}, t4: 'new' })
-  t.deepEqual(origin, { origin: 'a', t2: false, t3: {}, t4: 'false' })
-  t.deepEqual(t1, { t1: date })
-  t.deepEqual(t2, { t2: 'new' })
-  t.deepEqual(t3, { t3: 'new' })
-  t.deepEqual(t4, { t4: 'new', t3: {} })
+  expect(res).toEqual({ origin: 'a', t1: date, t2: 'new', t3: {}, t4: 'new' })
+  expect(origin).toEqual({ origin: 'a', t2: false, t3: {}, t4: 'false' })
+  expect(t1).toEqual({ t1: date })
+  expect(t2).toEqual({ t2: 'new' })
+  expect(t3).toEqual({ t3: 'new' })
+  expect(t4).toEqual({ t4: 'new', t3: {} })
 })
 
 test('symbols as keys 1', () => {
@@ -282,15 +282,15 @@ test('nonenumerable keys', () => {
   expect((res as any).yid).toEqual(2)
   expect((res as any)[mySymbol]).toEqual('new')
   expect(Object.keys(res).length).toEqual(2)
-  t.true(Object.keys(res).includes('value'))
-  t.true(Object.keys(res).includes('other'))
+  expect(Object.keys(res).includes('value')).toEqual(true)
+  expect(Object.keys(res).includes('other')).toEqual(true)
 })
 
 test('readme', () => {
   const starter = { name: 'Squirtle', types: { water: true } }
   const newValues = { name: 'Wartortle', types: { fighting: true }, level: 16 }
   const evolution = merge(starter, newValues, { is: 'cool' })
-  t.deepEqual(evolution, {
+  expect(evolution).toEqual({
     name: 'Wartortle',
     types: { water: true, fighting: true },
     level: 16,

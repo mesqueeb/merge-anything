@@ -11,5 +11,5 @@ test('mergeAndConcat', () => {
     a: { b: { c: ['y'] } },
   }
   const res = mergeAndConcat(origin, target)
-  t.deepEqual(res, { someArray: ['a', 'b'], a: { b: { c: ['x', 'y'] } } })
+  expect(res).toEqual({ someArray: ['a', 'b'], a: { b: { c: ['x', 'y'] } } })
 })

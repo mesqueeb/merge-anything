@@ -3,7 +3,7 @@ import { isDate, isString, isArray, isObject } from 'is-what'
 import { mergeAndCompare } from '../src/index'
 
 test('conversion based on original val', () => {
-  function convertTimestamps (originVal: any, targetVal: any) {
+  function convertTimestamps(originVal: any, targetVal: any) {
     if (originVal === '%convertTimestamp%' && isString(targetVal) && isDate(new Date(targetVal))) {
       return new Date(targetVal)
     }
@@ -16,13 +16,13 @@ test('conversion based on original val', () => {
     date: '1990-06-22',
   }
   const res = mergeAndCompare(convertTimestamps, origin, target)
-  t.deepEqual(res as any, { date: new Date('1990-06-22') })
+  expect(res as any).toEqual({ date: new Date('1990-06-22') })
   // doesn't work on base lvl anymore
   // const res2 = mergeAndCompare(convertTimestamps, '%convertTimestamp%', '1990-06-22')
-  // t.deepEqual(res2, new Date('1990-06-22'))
+  // expect(res2).toEqual( new Date('1990-06-22'))
 })
 test('conversion based on prop key', () => {
-  function convertTimestamps (originVal: any, targetVal: any, key: any) {
+  function convertTimestamps(originVal: any, targetVal: any, key: any) {
     if (isString(targetVal) && key === 'date') {
       return new Date(targetVal)
     }
@@ -37,10 +37,10 @@ test('conversion based on prop key', () => {
     a: { date: '1990-01-01' },
   }
   const res = mergeAndCompare(convertTimestamps, origin, target)
-  t.deepEqual(res as any, { date: new Date('1990-06-22'), a: { date: new Date('1990-01-01') } })
+  expect(res as any).toEqual({ date: new Date('1990-06-22'), a: { date: new Date('1990-01-01') } })
 })
 test('Extend with custom concat arrays', () => {
-  function concatArr (originVal: any, targetVal: any) {
+  function concatArr(originVal: any, targetVal: any) {
     if (isArray(originVal) && isArray(targetVal)) {
       return originVal.concat(targetVal)
     }
@@ -55,8 +55,8 @@ test('Extend with custom concat arrays', () => {
     a: { b: { c: ['y'] } },
   }
   const res = mergeAndCompare(concatArr, origin, target)
-  t.deepEqual(res, { someArray: ['a', 'b'], a: { b: { c: ['x', 'y'] } } })
+  expect(res).toEqual({ someArray: ['a', 'b'], a: { b: { c: ['x', 'y'] } } })
   // doesn't work on base lvl anymore
   // const res2 = mergeAndCompare(concatArr, ['a'], ['b'])
-  // t.deepEqual(res2, ['a', 'b'])
+  // expect(res2).toEqual( ['a', 'b'])
 })
