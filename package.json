@@ -1,6 +1,6 @@
 {
   "name": "merge-anything",
-  "version": "4.0.3",
+  "version": "5.0.0",
   "sideEffects": false,
   "type": "module",
   "description": "Merge objects & other types recursively. A simple & small integration.",
