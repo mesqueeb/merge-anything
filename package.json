@@ -18,8 +18,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=12.13",
-    "npm": ">=7"
+    "node": ">=12.13"
   },
   "scripts": {
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
