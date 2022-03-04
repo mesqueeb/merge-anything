@@ -167,7 +167,7 @@ However, **there is a really easy solution**. We can just copy the merge result 
 See below how we integrate 'copy-anything':
 
 ```js
-import copy from 'copy-anything'
+import { copy } from 'copy-anything'
 
 const original = { airport: { status: 'dep. 🛫' } }
 const extraInfo = { airport: { location: 'Brussels' } }
