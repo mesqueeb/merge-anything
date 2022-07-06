@@ -66,6 +66,13 @@ function mergeRecursively<
   return result
 }
 
+type ExpandDeep<T> =
+  T extends Record<string | number | symbol, unknown>
+    ? { [K in keyof T]: ExpandDeep<T[K]> }
+    : T extends Array<infer E>
+      ? Array<ExpandDeep<E>>
+      : T
+
 /**
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
@@ -76,7 +83,7 @@ function mergeRecursively<
 export function merge<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   object: T,
   ...otherObjects: Tn
-): O.Assign<T, Tn, 'deep'> {
+): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, object) as any
@@ -86,7 +93,7 @@ export function mergeAndCompare<T extends Record<string, any>, Tn extends Record
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
-): O.Assign<T, Tn, 'deep'> {
+): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
   }, object) as any
@@ -95,7 +102,7 @@ export function mergeAndCompare<T extends Record<string, any>, Tn extends Record
 export function mergeAndConcat<T extends Record<string, any>, Tn extends Record<string, any>[]>(
   object: T,
   ...otherObjects: Tn
-): O.Assign<T, Tn, 'deep'> {
+): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)
   }, object) as any
