@@ -1,30 +1,29 @@
 /**
- * Make an object properties (all) `never`. We use this to intersect `object`s and
- * preserve the combine modifiers like `+readonly` and `?optional`.
- */
-declare type Anyfy<O extends object> = {
-    [K in keyof O]: any;
-};
-/**
- * Get in `O` the type of a field of key `K`
- * @param O to extract from
- * @param K to extract at
- * @returns [[Any]]
+ * Get the keys of `O` that are optional
+ * @param O
+ * @returns [[Key]]
  * @example
  * ```ts
- * type User = {
- *  info: { name: string; age: number; payment: {} }
- *  id: number
- * }
- *
- * type test0 = At<User, 'id'> // number
  * ```
  */
-declare type At<A, K extends string | number | symbol> = unknown extends A ? unknown : K extends keyof A ? A[K] : undefined;
+declare type OptionalKeys<O extends object> = O extends unknown ? {
+    [K in keyof O]-?: {} extends Pick<O, K> ? K : never;
+}[keyof O] : never;
+/**
+ * Get the keys of `O` that are required
+ * @param O
+ * @returns [[Key]]
+ * @example
+ * ```ts
+ * ```
+ */
+declare type RequiredKeys<O extends object> = O extends unknown ? {
+    [K in keyof O]-?: {} extends Pick<O, K> ? never : K;
+}[keyof O] : never;
 declare type MergeObjectDeeply<O extends Record<string | number | symbol, unknown>, O1 extends Record<string | number | symbol, unknown>> = {
-    [K in keyof (Anyfy<O> & O1)]: K extends keyof O1 ? MergeObjectOrReturnValue<At<O, K>, At<O1, K>> : O[K];
+    [K in keyof (O & O1)]: K extends RequiredKeys<O1> ? O1[K] : K extends OptionalKeys<O1> ? K extends OptionalKeys<O> ? MergeObjectOrReturnUnion<Exclude<O[K], undefined>, Exclude<O1[K], undefined>> : K extends RequiredKeys<O> ? Exclude<O1[K], undefined> extends O[K] ? O[K] : MergeObjectOrReturnUnion<O[K], Exclude<O1[K], undefined>> : O1[K] : O[K];
 };
-declare type MergeObjectOrReturnValue<OK, O1K> = [O1K] extends [never] ? OK : OK extends Record<string | number | symbol, unknown> ? O1K extends Record<string | number | symbol, unknown> ? MergeObjectDeeply<OK, O1K> : O1K : O1K;
+declare type MergeObjectOrReturnUnion<Val0, Val1> = Val0 extends Record<string | number | symbol, unknown> ? Val1 extends Record<string | number | symbol, unknown> ? MergeObjectDeeply<Val0, Val1> : Val0 | Val1 : Val0 | Val1;
 /**
  * Accurately merge the fields of `O` with the ones of `O1`. It is
  * equivalent to the spread operator in JavaScript. [[Union]]s and [[Optional]]
@@ -63,5 +62,5 @@ declare type MergeObjectOrReturnValue<OK, O1K> = [O1K] extends [never] ? OK : OK
  * // }
  * ```
  */
-export declare type MergeDeep<O extends object, O1 extends object> = O extends unknown ? O1 extends unknown ? MergeObjectOrReturnValue<O, O1> : never : never;
+export declare type MergeDeep<O extends Record<string | number | symbol, unknown>, O1 extends Record<string | number | symbol, unknown>> = O extends unknown ? (O1 extends unknown ? MergeObjectDeeply<O, O1> : never) : never;
 export {};

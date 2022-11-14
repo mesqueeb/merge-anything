@@ -6,7 +6,7 @@ import type { PrettyPrint } from './typeUtils/PrettyPrint';
  *
  * This TS Utility can be used as standalone as well
  */
-export declare type Merge<T extends object, Ts extends List<object>> = PrettyPrint<Assign<T, Ts>>;
+export declare type Merge<T extends Record<string | number | symbol, unknown>, Ts extends List<Record<string | number | symbol, unknown>>> = PrettyPrint<Assign<T, Ts>>;
 /**
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".

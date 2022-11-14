@@ -34,8 +34,8 @@ declare type Cast<A1, A2> = A1 extends A2 ? A1 : A2;
  * ```
  */
 declare type Extends<A1, A2> = [A1] extends [never] ? 0 : A1 extends A2 ? 1 : 0;
-declare type __Assign<O extends object, Os extends List<object>, I extends Iteration = IterationOf<0>> = Extends<Pos<I>, Length<Os>> extends 1 ? O : __Assign<MergeDeep<O, Os[Pos<I>]>, Os, Next<I>>;
-declare type _Assign<O extends object, Os extends List<object>> = __Assign<O, Os> extends infer X ? Cast<X, object> : never;
+declare type __Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>, I extends Iteration = IterationOf<0>> = Extends<Pos<I>, Length<Os>> extends 1 ? O : __Assign<MergeDeep<O, Os[Pos<I>]>, Os, Next<I>>;
+declare type _Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>> = __Assign<O, Os> extends infer X ? Cast<X, Record<string | number | symbol, unknown>> : never;
 /**
  * Assign a list of [[Object]] into `O` with [[MergeDeep]]. Merges from right to
  * left, first items get overridden by the next ones (last-in overrides).
@@ -46,5 +46,5 @@ declare type _Assign<O extends object, Os extends List<object>> = __Assign<O, Os
  * ```ts
  * ```
  */
-export declare type Assign<O extends object, Os extends List<object>> = O extends unknown ? Os extends unknown ? _Assign<O, Os> : never : never;
+export declare type Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>> = O extends unknown ? (Os extends unknown ? _Assign<O, Os> : never) : never;
 export {};
