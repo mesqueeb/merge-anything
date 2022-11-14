@@ -68,6 +68,18 @@ In the example above, if you are using TypeScript, and you hover over `evolution
 
 ![typescript support](https://raw.githubusercontent.com/mesqueeb/merge-anything/master/.github/typescript-support.png)
 
+The return type of the `merge()` function is usable as a TypeScript utility as well:
+
+```ts
+import type { Merge } from 'merge-anything'
+
+type A1 = { name: string }
+type A2 = { types: { water: boolean } }
+type A3 = { types: { fighting: boolean } }
+
+type Result = Merge<A1, [A2, A3]>
+```
+
 ## Rules
 
 This package will recursively go through plain objects and merge the values onto a new object.
