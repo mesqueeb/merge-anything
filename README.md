@@ -26,15 +26,20 @@ This last one is crucial! In JavaScript almost everything is _an object_, sure, 
 
 merge-anything will merge objects and nested properties, but only as long as they're "plain objects". As soon as a sub-prop is not a "plain object" and has a special prototype, it will copy that instance over "as is". ♻️
 
-## Meet the family
+## Meet the family (more tiny utils with TS support)
 
-- [merge-anything 🥡](https://github.com/mesqueeb/merge-anything)
-- [filter-anything ⚔️](https://github.com/mesqueeb/filter-anything)
-- [find-and-replace-anything 🎣](https://github.com/mesqueeb/find-and-replace-anything)
-- [compare-anything 🛰](https://github.com/mesqueeb/compare-anything)
-- [copy-anything 🎭](https://github.com/mesqueeb/copy-anything)
-- [flatten-anything 🏏](https://github.com/mesqueeb/flatten-anything)
 - [is-what 🙉](https://github.com/mesqueeb/is-what)
+- [is-where 🙈](https://github.com/mesqueeb/is-where)
+- [merge-anything 🥡](https://github.com/mesqueeb/merge-anything)
+- [check-anything 👁](https://github.com/mesqueeb/check-anything)
+- [remove-anything ✂️](https://github.com/mesqueeb/remove-anything)
+- [getorset-anything 🐊](https://github.com/mesqueeb/getorset-anything)
+- [map-anything 🗺](https://github.com/mesqueeb/map-anything)
+- [filter-anything ⚔️](https://github.com/mesqueeb/filter-anything)
+- [copy-anything 🎭](https://github.com/mesqueeb/copy-anything)
+- [case-anything 🐫](https://github.com/mesqueeb/case-anything)
+- [flatten-anything 🏏](https://github.com/mesqueeb/flatten-anything)
+- [nestify-anything 🧅](https://github.com/mesqueeb/nestify-anything)
 
 ## Usage
 
@@ -124,7 +129,7 @@ For this case we use `mergeAndCompare`. Here is an example with a compare functi
 ```js
 import { mergeAndCompare } from 'merge-anything'
 
-function concatStrings (originVal, newVal, key) {
+function concatStrings(originVal, newVal, key) {
   if (typeof originVal === 'string' && typeof newVal === 'string') {
     // concat logic
     return `${originVal}${newVal}`
@@ -192,7 +197,7 @@ It is literally just going through an object recursively and assigning the value
 ```js
 import { isPlainObject } from 'is-what'
 
-function mergeRecursively (origin, newComer) {
+function mergeRecursively(origin, newComer) {
   if (!isPlainObject(newComer)) return newComer
   // define newObject to merge all values upon
   const newObject = isPlainObject(origin)
