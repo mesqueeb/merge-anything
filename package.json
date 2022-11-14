@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
-    "build": "rollup -c ./scripts/build.js",
+    "build": "rollup --bundleConfigAsCjs -c ./scripts/build.js",
     "release": "npm run lint && del dist && npm run build && np"
   },
   "repository": {

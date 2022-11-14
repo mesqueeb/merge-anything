@@ -1,2 +1,2 @@
-export { merge, mergeAndCompare, mergeAndConcat } from './merge';
-export { concatArrays } from './extensions';
+export * from './merge';
+export * from './extensions';

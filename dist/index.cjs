@@ -1,10 +1,7 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var isWhat = require('is-what');
 
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 function concatArrays(originVal, newVal) {
     if (isWhat.isArray(originVal) && isWhat.isArray(newVal)) {
         // concat logic
@@ -67,8 +64,6 @@ function mergeRecursively(origin, newComer, compareFn) {
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
- * @param object
- * @param otherObjects
  */
 function merge(object, ...otherObjects) {
     return otherObjects.reduce((result, newComer) => {
@@ -85,6 +80,14 @@ function mergeAndConcat(object, ...otherObjects) {
         return mergeRecursively(result, newComer, concatArrays);
     }, object);
 }
+// import { Timestamp } from 'firebase/firestore'
+// type T1 = { date: Timestamp }
+// type T2 = [{ b: string[] }, { b: number[] }, { date: Timestamp }]
+// type Test = Merge<T1, T2>
+// type A1 = { arr: string[] }
+// type A2 = { arr: number[] }
+// type A3 = { arr: boolean[] }
+// type Test = Merge<A1, [A2, A3]>
 
 exports.concatArrays = concatArrays;
 exports.merge = merge;
