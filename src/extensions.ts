@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { isArray } from 'is-what'
 
-export function concatArrays (originVal: any, newVal: any): any | any[] {
+export function concatArrays(originVal: any, newVal: any): any | any[] {
   if (isArray(originVal) && isArray(newVal)) {
     // concat logic
     return originVal.concat(newVal)

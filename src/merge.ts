@@ -1,12 +1,21 @@
-import { O } from 'ts-toolbelt'
+import type { Assign } from './typeUtils/Assign'
+import type { List } from './typeUtils/List'
+import type { PrettyPrint } from './typeUtils/PrettyPrint'
 import { isPlainObject, isSymbol } from 'is-what'
 import { concatArrays } from './extensions'
 
+/**
+ * The return type of `merge()`. It reflects the type that is returned by JavaScript.
+ *
+ * This TS Utility can be used as standalone as well
+ */
+export type Merge<T extends object, Ts extends List<object>> = PrettyPrint<Assign<T, Ts>>
+
 function assignProp(
-  carry: Record<string, any>,
+  carry: Record<string | number | symbol, unknown>,
   key: string,
   newVal: any,
-  originalObject: Record<string, any>
+  originalObject: Record<string | number | symbol, unknown>
 ): void {
   const propType = {}.propertyIsEnumerable.call(originalObject, key)
     ? 'enumerable'
@@ -23,8 +32,8 @@ function assignProp(
 }
 
 function mergeRecursively<
-  T1 extends Record<string, any> | any,
-  T2 extends Record<string, any> | any
+  T1 extends Record<string | number | symbol, unknown> | any,
+  T2 extends Record<string | number | symbol, unknown> | any
 >(
   origin: T1,
   newComer: T2,
@@ -43,7 +52,12 @@ function mergeRecursively<
         (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
         (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
       ) {
-        assignProp(carry as Record<string, any>, key as string, targetVal, origin)
+        assignProp(
+          carry as Record<string | number | symbol, unknown>,
+          key as string,
+          targetVal,
+          origin
+        )
       }
       return carry
     }, {} as (T1 & T2) | T2)
@@ -60,50 +74,59 @@ function mergeRecursively<
       newVal = mergeRecursively(targetVal, newVal, compareFn)
     }
     const propToAssign = compareFn ? compareFn(targetVal, newVal, key as string) : newVal
-    assignProp(carry as Record<string, any>, key as string, propToAssign, newComer)
+    assignProp(
+      carry as Record<string | number | symbol, unknown>,
+      key as string,
+      propToAssign,
+      newComer
+    )
     return carry
   }, newObject)
   return result
 }
 
-type ExpandDeep<T> =
-  T extends Record<string | number | symbol, unknown>
-    ? { [K in keyof T]: ExpandDeep<T[K]> }
-    : T extends Array<infer E>
-      ? Array<ExpandDeep<E>>
-      : T
-
 /**
  * Merge anything recursively.
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
- * @param object
- * @param otherObjects
  */
-export function merge<T extends Record<string, any>, Tn extends Record<string, any>[]>(
-  object: T,
-  ...otherObjects: Tn
-): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
+export function merge<
+  T extends Record<string | number | symbol, unknown>,
+  Tn extends Record<string | number | symbol, unknown>[]
+>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, object) as any
 }
 
-export function mergeAndCompare<T extends Record<string, any>, Tn extends Record<string, any>[]>(
+export function mergeAndCompare<
+  T extends Record<string | number | symbol, unknown>,
+  Tn extends Record<string | number | symbol, unknown>[]
+>(
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
-): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
+): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, compareFn)
   }, object) as any
 }
 
-export function mergeAndConcat<T extends Record<string, any>, Tn extends Record<string, any>[]>(
-  object: T,
-  ...otherObjects: Tn
-): ExpandDeep<O.Assign<T, Tn, 'deep'>> {
+export function mergeAndConcat<
+  T extends Record<string | number | symbol, unknown>,
+  Tn extends Record<string | number | symbol, unknown>[]
+>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)
   }, object) as any
 }
+
+// import { Timestamp } from 'firebase/firestore'
+// type T1 = { date: Timestamp }
+// type T2 = [{ b: string[] }, { b: number[] }, { date: Timestamp }]
+// type Test = Merge<T1, T2>
+
+// type A1 = { arr: string[] }
+// type A2 = { arr: number[] }
+// type A3 = { arr: boolean[] }
+// type Test = Merge<A1, [A2, A3]>
