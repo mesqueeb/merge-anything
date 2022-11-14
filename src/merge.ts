@@ -9,7 +9,10 @@ import { concatArrays } from './extensions'
  *
  * This TS Utility can be used as standalone as well
  */
-export type Merge<T extends object, Ts extends List<object>> = PrettyPrint<Assign<T, Ts>>
+export type Merge<
+  T extends Record<string | number | symbol, unknown>,
+  Ts extends List<Record<string | number | symbol, unknown>>
+> = PrettyPrint<Assign<T, Ts>>
 
 function assignProp(
   carry: Record<string | number | symbol, unknown>,

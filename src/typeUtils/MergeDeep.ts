@@ -1,48 +1,57 @@
-/**
- * Make an object properties (all) `never`. We use this to intersect `object`s and
- * preserve the combine modifiers like `+readonly` and `?optional`.
- */
-type Anyfy<O extends object> = {
-  [K in keyof O]: any
-}
+import { PrettyPrint } from './PrettyPrint'
 
 /**
- * Get in `O` the type of a field of key `K`
- * @param O to extract from
- * @param K to extract at
- * @returns [[Any]]
+ * Get the keys of `O` that are optional
+ * @param O
+ * @returns [[Key]]
  * @example
  * ```ts
- * type User = {
- *  info: { name: string; age: number; payment: {} }
- *  id: number
- * }
- *
- * type test0 = At<User, 'id'> // number
  * ```
  */
-type At<A, K extends string | number | symbol> = unknown extends A
-  ? unknown
-  : K extends keyof A
-  ? A[K]
-  : undefined
+type OptionalKeys<O extends object> = O extends unknown
+  ? {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      [K in keyof O]-?: {} extends Pick<O, K> ? K : never
+    }[keyof O]
+  : never
+
+/**
+ * Get the keys of `O` that are required
+ * @param O
+ * @returns [[Key]]
+ * @example
+ * ```ts
+ * ```
+ */
+type RequiredKeys<O extends object> = O extends unknown
+  ? {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      [K in keyof O]-?: {} extends Pick<O, K> ? never : K
+    }[keyof O]
+  : never
 
 type MergeObjectDeeply<
   O extends Record<string | number | symbol, unknown>,
   O1 extends Record<string | number | symbol, unknown>
 > = {
-  [K in keyof (Anyfy<O> & O1)]: K extends keyof O1
-    ? MergeObjectOrReturnValue<At<O, K>, At<O1, K>>
-    : O[K]
+  [K in keyof (O & O1)]: K extends RequiredKeys<O1> // second prop is non-optional
+    ? O1[K] // return second prop
+    : K extends OptionalKeys<O1> // second prop is optional
+    ? K extends OptionalKeys<O> // first prop is optional (second prop also)
+      ? MergeObjectOrReturnUnion<Exclude<O[K], undefined>, Exclude<O1[K], undefined>> // return union
+      : K extends RequiredKeys<O> // first prop required (second prop optional)
+      ? Exclude<O1[K], undefined> extends O[K] // (optional) second prop has the same type as the (required) first prop
+        ? O[K] // return only the first one
+        : MergeObjectOrReturnUnion<O[K], Exclude<O1[K], undefined>> // (optional) second prop has a different type as the (required) first prop, so return union without `undefined` in the second
+      : O1[K] // first prop inexistent, so return second prop
+    : O[K] // second prop inexistent, so return first prop
 }
 
-type MergeObjectOrReturnValue<OK, O1K> = [O1K] extends [never]
-  ? OK
-  : OK extends Record<string | number | symbol, unknown>
-  ? O1K extends Record<string | number | symbol, unknown>
-    ? MergeObjectDeeply<OK, O1K>
-    : O1K
-  : O1K
+type MergeObjectOrReturnUnion<Val0, Val1> = Val0 extends Record<string | number | symbol, unknown>
+  ? Val1 extends Record<string | number | symbol, unknown>
+    ? MergeObjectDeeply<Val0, Val1>
+    : Val0 | Val1
+  : Val0 | Val1
 
 /**
  * Accurately merge the fields of `O` with the ones of `O1`. It is
@@ -82,11 +91,10 @@ type MergeObjectOrReturnValue<OK, O1K> = [O1K] extends [never]
  * // }
  * ```
  */
-export type MergeDeep<O extends object, O1 extends object> = O extends unknown
-  ? O1 extends unknown
-    ? MergeObjectOrReturnValue<O, O1>
-    : never
-  : never
+export type MergeDeep<
+  O extends Record<string | number | symbol, unknown>,
+  O1 extends Record<string | number | symbol, unknown>
+> = O extends unknown ? (O1 extends unknown ? MergeObjectDeeply<O, O1> : never) : never
 
 // type O = {
 //   name?: string
@@ -114,11 +122,15 @@ export type MergeDeep<O extends object, O1 extends object> = O extends unknown
 //     city: string;
 // }
 
-// type A1 = { arr: string[] }
-// type A2 = { arr?: number[] }
-// type Test = MergeDeep<A1, A2>
+// type A1 = { arr: string[]; barr?: { b: number } }
+// type A2 = { arr?: number[]; barr?: { b: number } }
+// type TestA = PrettyPrint<MergeDeep<A1, A2>>
+
+// type B1 = { a: number; b?: number;            d?: number; e?: number; x: string;             y?: number; z: string;  } // prettier-ignore
+// type B2 = { a?: number;           c?: number; d?: number; e: number;  x: number | undefined; y?: string; z?: number; } // prettier-ignore
+// type TestB = PrettyPrint<MergeDeep<B1, B2>>
 
 // import { Timestamp } from 'firebase/firestore'
 // type T1 = { date: Timestamp }
 // type T2 = { date: Timestamp }
-// type Test1 = MergeDeep<T1, T2>
+// type TestT = MergeDeep<T1, T2>

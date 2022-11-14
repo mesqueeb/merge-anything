@@ -38,14 +38,15 @@ type Cast<A1, A2> = A1 extends A2 ? A1 : A2
 type Extends<A1, A2> = [A1] extends [never] ? 0 : A1 extends A2 ? 1 : 0
 
 type __Assign<
-  O extends object,
-  Os extends List<object>,
+  O extends Record<string | number | symbol, unknown>,
+  Os extends List<Record<string | number | symbol, unknown>>,
   I extends Iteration = IterationOf<0>
 > = Extends<Pos<I>, Length<Os>> extends 1 ? O : __Assign<MergeDeep<O, Os[Pos<I>]>, Os, Next<I>>
 
-type _Assign<O extends object, Os extends List<object>> = __Assign<O, Os> extends infer X
-  ? Cast<X, object>
-  : never
+type _Assign<
+  O extends Record<string | number | symbol, unknown>,
+  Os extends List<Record<string | number | symbol, unknown>>
+> = __Assign<O, Os> extends infer X ? Cast<X, Record<string | number | symbol, unknown>> : never
 
 /**
  * Assign a list of [[Object]] into `O` with [[MergeDeep]]. Merges from right to
@@ -57,18 +58,21 @@ type _Assign<O extends object, Os extends List<object>> = __Assign<O, Os> extend
  * ```ts
  * ```
  */
-export type Assign<O extends object, Os extends List<object>> = O extends unknown
-  ? Os extends unknown
-    ? _Assign<O, Os>
-    : never
-  : never
+export type Assign<
+  O extends Record<string | number | symbol, unknown>,
+  Os extends List<Record<string | number | symbol, unknown>>
+> = O extends unknown ? (Os extends unknown ? _Assign<O, Os> : never) : never
 
 // type A1 = { arr: string[] }
 // type A2 = { arr: number[] }
 // type A3 = { arr: boolean[] }
-// type Test = Assign<A1, [A2, A3]>
+// type TestA = Assign<A1, [A2, A3]>
+
+// type B1 = { arr: number[] }
+// type B2 = { arr?: number[] }
+// type TestB = Assign<B1, [B2]>
 
 // import { Timestamp } from 'firebase/firestore'
 // type T1 = { date: Timestamp }
 // type T2 = { date: Timestamp }
-// type Test1 = Assign<T1, [T2]>
+// type TestT = Assign<T1, [T2]>
