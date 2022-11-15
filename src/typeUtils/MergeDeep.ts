@@ -96,7 +96,7 @@ export type MergeDeep<
   O1 extends Record<string | number | symbol, unknown>
 > = O extends unknown ? (O1 extends unknown ? MergeObjectDeeply<O, O1> : never) : never
 
-import { PrettyPrint } from './PrettyPrint'
+// import { PrettyPrint } from './PrettyPrint'
 // type A1 = { arr: string[]; barr?: { b: number } }
 // type A2 = { arr?: number[]; barr?: { b: number } }
 // type TestA = PrettyPrint<MergeDeep<A1, A2>>
@@ -113,7 +113,11 @@ import { PrettyPrint } from './PrettyPrint'
 // type D2 = { [key in string]?: { notCool: boolean } | null }
 // type TestD = PrettyPrint<MergeDeep<D1, D2>>
 
-// import { Timestamp } from 'firebase/firestore'
+// import { Timestamp } from '../../test/Timestamp'
 // type T1 = { date: Timestamp }
 // type T2 = { date: Timestamp }
 // type TestT = MergeDeep<T1, T2>
+
+// interface I1 { date: Timestamp }
+// interface I2 { date: Timestamp }
+// type TestI = MergeDeep<I1, I2>

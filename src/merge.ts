@@ -124,7 +124,7 @@ export function mergeAndConcat<
   }, object) as any
 }
 
-// import { Timestamp } from 'firebase/firestore'
+// import { Timestamp } from '../test/Timestamp'
 // type T1 = { date: Timestamp }
 // type T2 = [{ b: string[] }, { b: number[] }, { date: Timestamp }]
 // type Test = Merge<T1, T2>
@@ -133,3 +133,18 @@ export function mergeAndConcat<
 // type A2 = { arr: number[] }
 // type A3 = { arr: boolean[] }
 // type Test = Merge<A1, [A2, A3]>
+
+// interface I1 { date: Timestamp }
+// type I2 = { date: Timestamp }
+// const _a: I2 = { date: '' } as unknown as I2
+// // type TestI = Merge<I1, I2>
+
+// // ReturnType<(typeof merge)<I1, I2>>
+// const a = merge(_a, [_a])
+
+// interface Arguments extends Record<string | number | symbol, unknown> {
+//     key: string;
+// }
+// const a1: Arguments = { key: "value1" }
+// const a2: Arguments = { key: "value2" }
+// const b = merge(a1, a2);

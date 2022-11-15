@@ -10,6 +10,6 @@ export type PrettyPrint<A, Seen = never> = If<
     : A
 >
 
-// import { Timestamp } from 'firebase/firestore'
+// import { Timestamp } from '../../test/Timestamp'
 // type T1 = { b: string } & { nested: { props: number[] } } & { date: Timestamp[]; d: any[] }
 // type Test1 = PrettyPrint<T1>

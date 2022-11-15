@@ -72,7 +72,7 @@ export type Assign<
 // type B2 = { arr?: number[] }
 // type TestB = Assign<B1, [B2]>
 
-// import { Timestamp } from 'firebase/firestore'
+// import { Timestamp } from '../../test/Timestamp'
 // type T1 = { date: Timestamp }
 // type T2 = { date: Timestamp }
 // type TestT = Assign<T1, [T2]>
