@@ -18,3 +18,12 @@ export declare type List<T = any> = readonly T[];
  * ```
  */
 export declare type Length<L extends List> = L['length'];
+/**
+ * Return the last item out of a [[List]]
+ * @param L
+ * @returns [[List]]
+ * @example
+ * ```ts
+ * ```
+ */
+export declare type Pop<L extends List> = L extends readonly [] ? L : L extends readonly [...any, infer Last] ? Last : L;
