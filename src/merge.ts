@@ -1,5 +1,5 @@
 import type { Assign } from './typeUtils/Assign'
-import type { List } from './typeUtils/List'
+import type { Pop } from './typeUtils/List'
 import type { PrettyPrint } from './typeUtils/PrettyPrint'
 import { isPlainObject, isSymbol } from 'is-what'
 import { concatArrays } from './extensions'
@@ -9,10 +9,11 @@ import { concatArrays } from './extensions'
  *
  * This TS Utility can be used as standalone as well
  */
-export type Merge<
-  T extends Record<string | number | symbol, unknown>,
-  Ts extends List<Record<string | number | symbol, unknown>>
-> = PrettyPrint<Assign<T, Ts>>
+export type Merge<T, Ts extends unknown[]> = T extends Record<string | number | symbol, unknown>
+  ? Ts extends Record<string | number | symbol, unknown>[]
+    ? PrettyPrint<Assign<T, Ts>>
+    : Pop<Ts>
+  : Pop<Ts>
 
 function assignProp(
   carry: Record<string | number | symbol, unknown>,
@@ -93,19 +94,13 @@ function mergeRecursively<
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  */
-export function merge<
-  T extends Record<string | number | symbol, unknown>,
-  Tn extends Record<string | number | symbol, unknown>[]
->(object: T, ...otherObjects: Tn): Merge<T, Tn> {
+export function merge<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, object) as any
 }
 
-export function mergeAndCompare<
-  T extends Record<string | number | symbol, unknown>,
-  Tn extends Record<string | number | symbol, unknown>[]
->(
+export function mergeAndCompare<T, Tn extends unknown[]>(
   compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
@@ -115,10 +110,10 @@ export function mergeAndCompare<
   }, object) as any
 }
 
-export function mergeAndConcat<
-  T extends Record<string | number | symbol, unknown>,
-  Tn extends Record<string | number | symbol, unknown>[]
->(object: T, ...otherObjects: Tn): Merge<T, Tn> {
+export function mergeAndConcat<T, Tn extends unknown[]>(
+  object: T,
+  ...otherObjects: Tn
+): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer, concatArrays)
   }, object) as any
@@ -127,17 +122,21 @@ export function mergeAndConcat<
 // import { Timestamp } from '../test/Timestamp'
 // type T1 = { date: Timestamp }
 // type T2 = [{ b: string[] }, { b: number[] }, { date: Timestamp }]
-// type Test = Merge<T1, T2>
+// type TestT = Merge<T1, T2>
 
 // type A1 = { arr: string[] }
 // type A2 = { arr: number[] }
 // type A3 = { arr: boolean[] }
-// type Test = Merge<A1, [A2, A3]>
+// type TestA = Merge<A1, [A2, A3]>
 
-// interface I1 { date: Timestamp }
-// type I2 = { date: Timestamp }
+// interface I1 {
+//   date: Timestamp
+// }
+// interface I2 {
+//   date: Timestamp
+// }
 // const _a: I2 = { date: '' } as unknown as I2
-// // type TestI = Merge<I1, I2>
+// type TestI = Merge<I1, [I2]>
 
 // // ReturnType<(typeof merge)<I1, I2>>
 // const a = merge(_a, [_a])
@@ -145,6 +144,14 @@ export function mergeAndConcat<
 // interface Arguments extends Record<string | number | symbol, unknown> {
 //     key: string;
 // }
-// const a1: Arguments = { key: "value1" }
-// const a2: Arguments = { key: "value2" }
-// const b = merge(a1, a2);
+
+// const aa1: Arguments = { key: "value1" }
+// const aa2: Arguments = { key: "value2" }
+// const aa = merge(a1, a2);
+
+// interface Barguments {
+//   key: string
+// }
+// const ba1: Barguments = { key: 'value1' }
+// const ba2: Barguments = { key: 'value2' }
+// const ba = merge(ba1, ba2)
