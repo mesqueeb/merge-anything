@@ -26,4 +26,4 @@ export declare type Length<L extends List> = L['length'];
  * ```ts
  * ```
  */
-export declare type Pop<L extends List> = L extends readonly [] ? L : L extends readonly [...any, infer Last] ? Last : L;
+export declare type Pop<L extends List> = L extends readonly [] ? never : L extends [...unknown[], infer Last] ? Last : L extends (infer T)[] ? T : never;
