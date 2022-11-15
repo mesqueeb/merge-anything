@@ -155,3 +155,9 @@ export function mergeAndConcat<T, Tn extends unknown[]>(
 // const ba1: Barguments = { key: 'value1' }
 // const ba2: Barguments = { key: 'value2' }
 // const ba = merge(ba1, ba2)
+
+// interface Carguments {
+//   key: string
+// }
+// const ca = merge<Carguments, Carguments[]>({ key: 'value1' }, { key: 'value2' })
+// type P = Pop<Carguments[]>

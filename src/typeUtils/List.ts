@@ -29,7 +29,9 @@ export type Length<L extends List> = L['length']
  * ```
  */
 export type Pop<L extends List> = L extends readonly []
-  ? L
-  : L extends readonly [...any, infer Last]
+  ? never
+  : L extends [...unknown[], infer Last]
   ? Last
-  : L
+  : L extends (infer T)[]
+  ? T
+  : never
