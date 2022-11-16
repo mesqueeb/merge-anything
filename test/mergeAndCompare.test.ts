@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { isDate, isString, isArray, isObject } from 'is-what'
+import { isDate, isString, isArray } from 'is-what'
 import { mergeAndCompare } from '../src/index'
 
 test('conversion based on original val', () => {
@@ -59,4 +59,58 @@ test('Extend with custom concat arrays', () => {
   // doesn't work on base lvl anymore
   // const res2 = mergeAndCompare(concatArr, ['a'], ['b'])
   // expect(res2).toEqual( ['a', 'b'])
+})
+
+test('undefined object', () => {
+  const origin = {
+    pages: {
+      'aa': 'ttt',
+    },
+  }
+
+  const newData = {
+    pages: {
+      'aa': '1111',
+      'bb': '2222',
+    }
+  }
+
+  function convertTimestamps(originVal: any, targetVal: any, key: any) {
+    if (originVal !== undefined)
+      return targetVal
+  }
+
+  const res = mergeAndCompare(convertTimestamps, origin, newData)
+  expect(res as any).toEqual({ pages: { aa: "1111", bb: undefined } })
+})
+
+test('undefined array', () => {
+  function convertTimestamps(originVal: any, targetVal: any, key: any) {
+    if (originVal !== undefined)
+      return targetVal
+  }
+  const origin = {
+    date: [
+      {
+        'new': 'aaa',
+      }
+    ]
+  }
+  const target = {
+    date: [
+      {
+        'new': 'aaa',
+        'old': 'bbb',
+      }
+    ]
+  }
+  const res = mergeAndCompare(convertTimestamps, origin, target)
+  expect(res as any).toEqual({
+    date: [
+      {
+        'new': 'aaa',
+        'old': undefined,
+      }
+    ]
+  })
 })
