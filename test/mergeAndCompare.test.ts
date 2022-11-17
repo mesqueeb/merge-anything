@@ -1,5 +1,5 @@
 import { test, expect } from 'vitest'
-import { isDate, isString, isArray, isObject } from 'is-what'
+import { isDate, isString, isArray } from 'is-what'
 import { mergeAndCompare } from '../src/index'
 
 test('conversion based on original val', () => {
