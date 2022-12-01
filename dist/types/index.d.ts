@@ -1,2 +1,2 @@
-export * from './merge';
-export * from './extensions';
+export * from './merge.js';
+export * from './extensions.js';

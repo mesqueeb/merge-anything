@@ -1,6 +1,6 @@
-import { MergeDeep } from './MergeDeep'
-import { Iteration, IterationOf, Pos, Next } from './Iteration'
-import { Length, List } from './List'
+import type { MergeDeep } from './MergeDeep.js'
+import type { Iteration, IterationOf, Pos, Next } from './Iteration.js'
+import type { Length, List } from './List.js'
 
 /**
  * Ask TS to re-check that `A1` extends `A2`.

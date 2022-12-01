@@ -1,8 +1,8 @@
-import type { Assign } from './typeUtils/Assign'
-import type { Pop } from './typeUtils/List'
-import type { PrettyPrint } from './typeUtils/PrettyPrint'
 import { isPlainObject, isSymbol } from 'is-what'
-import { concatArrays } from './extensions'
+import type { Assign } from './typeUtils/Assign.js'
+import type { Pop } from './typeUtils/List.js'
+import type { PrettyPrint } from './typeUtils/PrettyPrint.js'
+import { concatArrays } from './extensions.js'
 
 /**
  * The return type of `merge()`. It reflects the type that is returned by JavaScript.

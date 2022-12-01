@@ -8,7 +8,7 @@
  * type list1 = number[]
  * ```
  */
-export declare type List<T = any> = readonly T[];
+export type List<T = any> = readonly T[];
 /**
  * Get the length of `L`
  * @param L to get length
@@ -17,7 +17,7 @@ export declare type List<T = any> = readonly T[];
  * ```ts
  * ```
  */
-export declare type Length<L extends List> = L['length'];
+export type Length<L extends List> = L['length'];
 /**
  * Return the last item out of a [[List]]
  * @param L
@@ -26,4 +26,4 @@ export declare type Length<L extends List> = L['length'];
  * ```ts
  * ```
  */
-export declare type Pop<L extends List> = L extends readonly [] ? never : L extends [...unknown[], infer Last] ? Last : L extends (infer T)[] ? T : never;
+export type Pop<L extends List> = L extends readonly [] ? never : L extends [...unknown[], infer Last] ? Last : L extends (infer T)[] ? T : never;

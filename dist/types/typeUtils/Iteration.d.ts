@@ -1,14 +1,14 @@
 /**
  * An entry of `IterationMap`
  */
-export declare type Iteration = [
+export type Iteration = [
     value: number,
     sign: '-' | '0' | '+',
     prev: keyof IterationMap,
     next: keyof IterationMap,
     oppo: keyof IterationMap
 ];
-export declare type IterationMap = {
+export type IterationMap = {
     '__': [number, '-' | '0' | '+', '__', '__', '__'];
     '-100': [-100, '-', '__', '-99', '100'];
     '-99': [-99, '-', '-100', '-98', '99'];
@@ -228,7 +228,7 @@ export declare type IterationMap = {
  * type nprev = Pos<prev>    // -1
  * ```
  */
-export declare type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? IterationMap[`${N}`] : IterationMap['__'];
+export type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? IterationMap[`${N}`] : IterationMap['__'];
 /**
  * Get the position of `I` (**number**)
  * @param I to query
@@ -241,7 +241,7 @@ export declare type IterationOf<N extends number> = `${N}` extends keyof Iterati
  * type test1 = Pos<Next<i>> // 21
  * ```
  */
-export declare type Pos<I extends Iteration> = I[0];
+export type Pos<I extends Iteration> = I[0];
 /**
  * Move `I`'s position forward
  * @param I to move
@@ -254,4 +254,4 @@ export declare type Pos<I extends Iteration> = I[0];
  * type test1 = Pos<Next<i>> // 21
  * ```
  */
-export declare type Next<I extends Iteration> = IterationMap[I[3]];
+export type Next<I extends Iteration> = IterationMap[I[3]];
