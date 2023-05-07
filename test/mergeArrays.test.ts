@@ -19,10 +19,6 @@ function mergeArrays(originVal: any, newVal: any): any | any[] {
 }
 
 test('undefined object', () => {
-  function merge(originVal: any, targetVal: any, key: any) {
-    if (originVal !== undefined) return targetVal
-  }
-
   const origin = {
     pages: {
       aa: 'ttt',
