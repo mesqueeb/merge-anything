@@ -71,7 +71,7 @@
     "eslint-plugin-tree-shaking": "^1.10.0",
     "np": "^7.7.0",
     "prettier": "^2.8.8",
-    "rollup": "^3.21.0",
+    "rollup": "^3.21.5",
     "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^5.0.4",
     "vitest": "^0.30.1"

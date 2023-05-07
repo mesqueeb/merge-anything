@@ -1,16 +1,22 @@
 {
   "compilerOptions": {
+    "allowJs": false,
     "baseUrl": ".",
-    "module": "esnext",
-    "target": "es2019",
-    "lib": ["esnext", "DOM"],
-    "strict": true,
-    "moduleResolution": "node",
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
     "declaration": true,
-    "declarationDir": "./dist/types/"
+    "declarationDir": "./dist/types/",
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["esnext", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2019",
+    "useDefineForClassFields": true
   },
   "include": ["src/**/*", "test/**/*"]
 }
