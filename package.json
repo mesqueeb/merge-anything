@@ -1,17 +1,22 @@
 {
   "name": "merge-anything",
   "version": "5.1.6",
-  "sideEffects": false,
-  "type": "module",
   "description": "Merge objects & other types recursively. A simple & small integration.",
-  "module": "./dist/index.es.js",
-  "main": "./dist/index.cjs",
-  "types": "./dist/types/index.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs"
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
   "files": [
@@ -23,7 +28,7 @@
   "scripts": {
     "lint": "tsc --noEmit && eslint ./src --ext .ts",
     "test": "vitest run",
-    "build": "rollup --bundleConfigAsCjs -c ./scripts/build.js",
+    "build": "rollup -c ./rollup.config.js",
     "release": "npm run lint && del dist && npm run build && np"
   },
   "repository": {
@@ -71,8 +76,9 @@
     "eslint-plugin-tree-shaking": "^1.10.0",
     "np": "^7.7.0",
     "prettier": "^2.8.8",
-    "rollup": "^3.21.5",
-    "rollup-plugin-typescript2": "^0.34.1",
+    "rollup": "^3.23.0",
+    "rollup-plugin-dts": "^5.3.0",
+    "rollup-plugin-esbuild": "^5.0.0",
     "typescript": "^5.0.4",
     "vitest": "^0.31.0"
   },
