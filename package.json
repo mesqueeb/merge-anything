@@ -4,9 +4,6 @@
   "description": "Merge objects & other types recursively. A simple & small integration.",
   "type": "module",
   "sideEffects": false,
-  "types": "./dist/index.d.ts",
-  "module": "./dist/index.js",
-  "main": "./dist/index.js",
   "exports": {
     ".": {
       "require": {
@@ -19,22 +16,28 @@
       }
     }
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit && eslint ./src",
+    "test": "vitest run",
+    "build": "del-cli dist && tsc",
+    "release": "npm run lint && npm run build && np"
+  },
+  "dependencies": {
+    "is-what": "^4.1.8"
+  },
+  "devDependencies": {
+    "del-cli": "^5.1.0",
+    "np": "^10.0.5",
+    "vitest": "^1.6.0",
+    "@cycraft/eslint": "^0.3.0",
+    "@cycraft/tsconfig": "^0.1.2"
+  },
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=12.13"
-  },
-  "scripts": {
-    "lint": "tsc --noEmit && eslint ./src --ext .ts",
-    "test": "vitest run",
-    "build": "rollup -c ./rollup.config.js",
-    "release": "npm run lint && del dist && npm run build && np"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mesqueeb/merge-anything.git"
-  },
   "keywords": [
     "javascript",
     "merge",
@@ -57,60 +60,13 @@
     "merge-combine",
     "nested-combine"
   ],
-  "author": "Luca Ban - Mesqueeb",
+  "author": "Luca Ban - Mesqueeb (https://cycraft.co)",
   "funding": "https://github.com/sponsors/mesqueeb",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mesqueeb/merge-anything/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mesqueeb/merge-anything.git"
   },
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
-  "dependencies": {
-    "is-what": "^4.1.8"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59.2",
-    "@typescript-eslint/parser": "^5.59.2",
-    "del-cli": "^5.0.0",
-    "eslint": "^8.40.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-tree-shaking": "^1.10.0",
-    "np": "^7.7.0",
-    "prettier": "^2.8.8",
-    "rollup": "^3.23.0",
-    "rollup-plugin-dts": "^5.3.0",
-    "rollup-plugin-esbuild": "^5.0.0",
-    "typescript": "^5.0.4",
-    "vitest": "^0.31.0"
-  },
-  "np": {
-    "yarn": false,
-    "branch": "production"
-  },
-  "eslintConfig": {
-    "ignorePatterns": [
-      "node_modules",
-      "dist",
-      "scripts",
-      "test"
-    ],
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint",
-      "tree-shaking"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended",
-      "prettier"
-    ],
-    "rules": {
-      "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/ban-ts-ignore": "off",
-      "tree-shaking/no-side-effects-in-initialization": "error",
-      "@typescript-eslint/ban-ts-comment": "off"
-    }
-  }
+  "bugs": "https://github.com/mesqueeb/merge-anything/issues"
 }

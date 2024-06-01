@@ -1,25 +1,26 @@
 import { isPlainObject, isSymbol } from 'is-what'
+import { concatArrays } from './extensions.js'
 import type { Assign } from './typeUtils/Assign.js'
 import type { Pop } from './typeUtils/List.js'
 import type { PrettyPrint } from './typeUtils/PrettyPrint.js'
-import { concatArrays } from './extensions.js'
 
 /**
  * The return type of `merge()`. It reflects the type that is returned by JavaScript.
  *
  * This TS Utility can be used as standalone as well
  */
-export type Merge<T, Ts extends unknown[]> = T extends Record<string | number | symbol, unknown>
-  ? Ts extends Record<string | number | symbol, unknown>[]
-    ? PrettyPrint<Assign<T, Ts>>
+export type Merge<T, Ts extends unknown[]> =
+  T extends Record<string | number | symbol, unknown>
+    ? Ts extends Record<string | number | symbol, unknown>[]
+      ? PrettyPrint<Assign<T, Ts>>
+      : Pop<Ts>
     : Pop<Ts>
-  : Pop<Ts>
 
 function assignProp(
   carry: Record<string | number | symbol, unknown>,
   key: string,
-  newVal: any,
-  originalObject: Record<string | number | symbol, unknown>
+  newVal: unknown,
+  originalObject: Record<string | number | symbol, unknown>,
 ): void {
   const propType = {}.propertyIsEnumerable.call(originalObject, key)
     ? 'enumerable'
@@ -37,11 +38,11 @@ function assignProp(
 
 function mergeRecursively<
   T1 extends Record<string | number | symbol, unknown> | any,
-  T2 extends Record<string | number | symbol, unknown> | any
+  T2 extends Record<string | number | symbol, unknown> | any,
 >(
   origin: T1,
   newComer: T2,
-  compareFn?: (prop1: any, prop2: any, propName: string) => any
+  compareFn?: (prop1: T1[keyof T1], prop2: T2[keyof T2], propName: keyof T1) => any,
 ): (T1 & T2) | T2 {
   // always return newComer if its not an object
   if (!isPlainObject(newComer)) return newComer
@@ -50,21 +51,24 @@ function mergeRecursively<
   if (isPlainObject(origin)) {
     const props = Object.getOwnPropertyNames(origin)
     const symbols = Object.getOwnPropertySymbols(origin)
-    newObject = [...props, ...symbols].reduce((carry, key) => {
-      const targetVal = origin[key as string]
-      if (
-        (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
-        (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
-      ) {
-        assignProp(
-          carry as Record<string | number | symbol, unknown>,
-          key as string,
-          targetVal,
-          origin
-        )
-      }
-      return carry
-    }, {} as (T1 & T2) | T2)
+    newObject = [...props, ...symbols].reduce(
+      (carry, key) => {
+        const targetVal = origin[key as string]
+        if (
+          (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
+          (isSymbol(key) && !Object.getOwnPropertySymbols(newComer).includes(key))
+        ) {
+          assignProp(
+            carry as Record<string | number | symbol, unknown>,
+            key as string,
+            targetVal,
+            origin,
+          )
+        }
+        return carry
+      },
+      {} as (T1 & T2) | T2,
+    )
   }
   // newObject has all properties that newComer hasn't
   const props = Object.getOwnPropertyNames(newComer)
@@ -77,12 +81,12 @@ function mergeRecursively<
     if (targetVal !== undefined && isPlainObject(newVal)) {
       newVal = mergeRecursively(targetVal, newVal, compareFn)
     }
-    const propToAssign = compareFn ? compareFn(targetVal, newVal, key as string) : newVal
+    const propToAssign = compareFn ? compareFn(targetVal, newVal, key as unknown as any) : newVal
     assignProp(
       carry as Record<string | number | symbol, unknown>,
       key as string,
       propToAssign,
-      newComer
+      newComer,
     )
     return carry
   }, newObject)
@@ -101,7 +105,7 @@ export function merge<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): 
 }
 
 export function mergeAndCompare<T, Tn extends unknown[]>(
-  compareFn: (prop1: any, prop2: any, propName: string | symbol) => any,
+  compareFn: (prop1: unknown, prop2: unknown, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
 ): Merge<T, Tn> {

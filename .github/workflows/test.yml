@@ -1,0 +1,37 @@
+name: Test
+on:
+  push:
+    branches: main
+    paths:
+      - src/**
+      - test/**
+      - '*.js'
+      - '*.ts'
+      - '*.json'
+      - .github/workflows/test.yml
+  pull_request:
+    branches: main
+    paths:
+      - src/**
+      - test/**
+      - '*.js'
+      - '*.ts'
+      - '*.json'
+      - .github/workflows/test.yml
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    strategy:
+      matrix:
+        node-version: ['18', '20']
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm test

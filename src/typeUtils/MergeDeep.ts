@@ -8,7 +8,7 @@
  */
 type OptionalKeys<O extends object> = O extends unknown
   ? {
-      // eslint-disable-next-line @typescript-eslint/ban-types
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       [K in keyof O]-?: {} extends Pick<O, K> ? K : never
     }[keyof O]
   : never
@@ -23,44 +23,42 @@ type OptionalKeys<O extends object> = O extends unknown
  */
 type RequiredKeys<O extends object> = O extends unknown
   ? {
-      // eslint-disable-next-line @typescript-eslint/ban-types
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       [K in keyof O]-?: {} extends Pick<O, K> ? never : K
     }[keyof O]
   : never
 
 type MergeObjectDeeply<
   O extends Record<string | number | symbol, unknown>,
-  O1 extends Record<string | number | symbol, unknown>
+  O1 extends Record<string | number | symbol, unknown>,
 > = {
   [K in keyof (O & O1)]: K extends RequiredKeys<O1> // second prop is non-optional
     ? MergeObjectsOrReturnFallback<O[K], O1[K], O1[K]> // return second prop
     : K extends OptionalKeys<O1> // second prop is optional
-    ? K extends OptionalKeys<O> // first prop is optional (second prop also)
-      ? MergeObjectsOrReturnFallback<
-          Exclude<O[K], undefined>,
-          Exclude<O1[K], undefined>,
-          Exclude<O[K], undefined> | Exclude<O1[K], undefined>
-        > // return union
-      : K extends RequiredKeys<O> // first prop required (second prop optional)
-      ? Exclude<O1[K], undefined> extends O[K] // (optional) second prop has the same type as the (required) first prop
-        ? O[K] // return only the first one
-        : MergeObjectsOrReturnFallback<
-            O[K],
+      ? K extends OptionalKeys<O> // first prop is optional (second prop also)
+        ? MergeObjectsOrReturnFallback<
+            Exclude<O[K], undefined>,
             Exclude<O1[K], undefined>,
-            O[K] | Exclude<O1[K], undefined>
-          > // (optional) second prop has a different type as the (required) first prop, so return union without `undefined` in the second
-      : O1[K] // first prop inexistent, so return second prop
-    : O[K] // second prop inexistent, so return first prop
+            Exclude<O[K], undefined> | Exclude<O1[K], undefined>
+          > // return union
+        : K extends RequiredKeys<O> // first prop required (second prop optional)
+          ? Exclude<O1[K], undefined> extends O[K] // (optional) second prop has the same type as the (required) first prop
+            ? O[K] // return only the first one
+            : MergeObjectsOrReturnFallback<
+                O[K],
+                Exclude<O1[K], undefined>,
+                O[K] | Exclude<O1[K], undefined>
+              > // (optional) second prop has a different type as the (required) first prop, so return union without `undefined` in the second
+          : O1[K] // first prop inexistent, so return second prop
+      : O[K] // second prop inexistent, so return first prop
 }
 
-type MergeObjectsOrReturnFallback<O, O1, Fallback> = O extends Record<
-  string | number | symbol,
-  unknown
->
-  ? O1 extends Record<string | number | symbol, unknown>
-    ? MergeObjectDeeply<O, O1>
+type MergeObjectsOrReturnFallback<O, O1, Fallback> =
+  O extends Record<string | number | symbol, unknown>
+    ? O1 extends Record<string | number | symbol, unknown>
+      ? MergeObjectDeeply<O, O1>
+      : Fallback
     : Fallback
-  : Fallback
 
 /**
  * Accurately merge the fields of `O` with the ones of `O1`. It is
@@ -93,7 +91,7 @@ type MergeObjectsOrReturnFallback<O, O1, Fallback> = O extends Record<
  */
 export type MergeDeep<
   O extends Record<string | number | symbol, unknown>,
-  O1 extends Record<string | number | symbol, unknown>
+  O1 extends Record<string | number | symbol, unknown>,
 > = O extends unknown ? (O1 extends unknown ? MergeObjectDeeply<O, O1> : never) : never
 
 // import { PrettyPrint } from './PrettyPrint'
