@@ -5,16 +5,7 @@
   "type": "module",
   "sideEffects": false,
   "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/cjs/index.d.cts",
-        "default": "./dist/cjs/index.cjs"
-      },
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      }
-    }
+    ".": "./dist/index.js"
   },
   "engines": {
     "node": ">=18"
