@@ -36,10 +36,7 @@ function assignProp(
   }
 }
 
-function mergeRecursively<
-  T1 extends Record<string | number | symbol, unknown> | any,
-  T2 extends Record<string | number | symbol, unknown> | any,
->(
+function mergeRecursively<T1, T2>(
   origin: T1,
   newComer: T2,
   compareFn?: (prop1: T1[keyof T1], prop2: T2[keyof T2], propName: keyof T1) => any,
@@ -79,9 +76,9 @@ function mergeRecursively<
     const targetVal = isPlainObject(origin) ? origin[key as string] : undefined
     // When newVal is an object do the merge recursively
     if (targetVal !== undefined && isPlainObject(newVal)) {
-      newVal = mergeRecursively(targetVal, newVal, compareFn)
+      newVal = mergeRecursively(targetVal as any, newVal as any, compareFn)
     }
-    const propToAssign = compareFn ? compareFn(targetVal, newVal, key as unknown as any) : newVal
+    const propToAssign = compareFn ? compareFn(targetVal as any, newVal as any, key as any) : newVal
     assignProp(
       carry as Record<string | number | symbol, unknown>,
       key as string,
