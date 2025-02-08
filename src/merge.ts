@@ -95,13 +95,13 @@ function mergeRecursively<T1, T2>(
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  */
-export function merge<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
+export function merge<T, const Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
     return mergeRecursively(result, newComer)
   }, object) as any
 }
 
-export function mergeAndCompare<T, Tn extends unknown[]>(
+export function mergeAndCompare<T, const Tn extends unknown[]>(
   compareFn: (prop1: unknown, prop2: unknown, propName: string | symbol) => any,
   object: T,
   ...otherObjects: Tn
@@ -111,7 +111,7 @@ export function mergeAndCompare<T, Tn extends unknown[]>(
   }, object) as any
 }
 
-export function mergeAndConcat<T, Tn extends unknown[]>(
+export function mergeAndConcat<T, const Tn extends unknown[]>(
   object: T,
   ...otherObjects: Tn
 ): Merge<T, Tn> {
