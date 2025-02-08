@@ -12,6 +12,6 @@ export type Merge<T, Ts extends unknown[]> = T extends Record<string | number | 
  * Objects get merged, special objects (classes etc.) are re-assigned "as is".
  * Basic types overwrite objects or other basic types.
  */
-export declare function merge<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
-export declare function mergeAndCompare<T, Tn extends unknown[]>(compareFn: (prop1: unknown, prop2: unknown, propName: string | symbol) => any, object: T, ...otherObjects: Tn): Merge<T, Tn>;
-export declare function mergeAndConcat<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
+export declare function merge<T, const Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
+export declare function mergeAndCompare<T, const Tn extends unknown[]>(compareFn: (prop1: unknown, prop2: unknown, propName: string | symbol) => any, object: T, ...otherObjects: Tn): Merge<T, Tn>;
+export declare function mergeAndConcat<T, const Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
