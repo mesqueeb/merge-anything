@@ -6,7 +6,7 @@ export type Iteration = [
   sign: '-' | '0' | '+',
   prev: keyof IterationMap,
   next: keyof IterationMap,
-  oppo: keyof IterationMap
+  oppo: keyof IterationMap,
 ]
 
 export type IterationMap = {

@@ -1,71 +1,14 @@
 /**
- * Get the keys of `O` that are optional
- * @param O
- * @returns [[Key]]
- * @example
- * ```ts
- * ```
- */
-type OptionalKeys<O extends object> = O extends unknown ? {
-    [K in keyof O]-?: {} extends Pick<O, K> ? K : never;
-}[keyof O] : never;
-/**
- * Get the keys of `O` that are required
- * @param O
- * @returns [[Key]]
- * @example
- * ```ts
- * ```
- */
-type RequiredKeys<O extends object> = O extends unknown ? {
-    [K in keyof O]-?: {} extends Pick<O, K> ? never : K;
-}[keyof O] : never;
-type MergeObjectDeeply<O extends Record<string | number | symbol, unknown>, O1 extends Record<string | number | symbol, unknown>> = {
-    [K in keyof (O & O1)]: K extends RequiredKeys<O1> ? MergeObjectsOrReturnFallback<O[K], O1[K], O1[K]> : K extends OptionalKeys<O1> ? K extends OptionalKeys<O> ? MergeObjectsOrReturnFallback<Exclude<O[K], undefined>, Exclude<O1[K], undefined>, Exclude<O[K], undefined> | Exclude<O1[K], undefined>> : K extends RequiredKeys<O> ? Exclude<O1[K], undefined> extends O[K] ? O[K] : MergeObjectsOrReturnFallback<O[K], Exclude<O1[K], undefined>, O[K] | Exclude<O1[K], undefined>> : O1[K] : O[K];
-};
-type MergeObjectsOrReturnFallback<O, O1, Fallback> = O extends Record<string | number | symbol, unknown> ? O1 extends Record<string | number | symbol, unknown> ? MergeObjectDeeply<O, O1> : Fallback : Fallback;
-/**
- * Accurately merge the fields of `O` with the ones of `O1`. It is
- * equivalent to the spread operator in JavaScript. [[Union]]s and [[Optional]]
- * fields will be handled gracefully.
- *
- * (⚠️ needs `--strictNullChecks` enabled)
- * @param O to complete
- * @param O1 to copy from
- * @returns [[Object]]
- * @example
- * ```ts
- * import { PrettyPrint } from './PrettyPrint'
- *
- * type A1 = { a: number; b?: number;            d?: number; e?: number; x: string;             y?: number; z: string;  } // prettier-ignore
- * type A2 = { a?: number;           c?: number; d?: number; e: number;  x: number | undefined; y?: string; z?: number; } // prettier-ignore
- *
- * type Result = PrettyPrint<MergeDeep<A1, A2>>
- * {
- *    a: number;
- *    b?: number | undefined;
- *    c?: number | undefined;
- *    d?: number | undefined;
- *    e: number;
- *    x: number | undefined;
- *    y?: string | number | undefined;
- *    z: string | number;
- * }
- * ```
- */
-type MergeDeep<O extends Record<string | number | symbol, unknown>, O1 extends Record<string | number | symbol, unknown>> = O extends unknown ? (O1 extends unknown ? MergeObjectDeeply<O, O1> : never) : never;
-
-/**
  * An entry of `IterationMap`
  */
-type Iteration = [
+export type Iteration = [
     value: number,
     sign: '-' | '0' | '+',
     prev: keyof IterationMap,
     next: keyof IterationMap,
     oppo: keyof IterationMap
 ];
-type IterationMap = {
+export type IterationMap = {
     '__': [number, '-' | '0' | '+', '__', '__', '__'];
     '-100': [-100, '-', '__', '-99', '100'];
     '-99': [-99, '-', '-100', '-98', '99'];
@@ -285,7 +228,7 @@ type IterationMap = {
  * type nprev = Pos<prev>    // -1
  * ```
  */
-type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? IterationMap[`${N}`] : IterationMap['__'];
+export type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? IterationMap[`${N}`] : IterationMap['__'];
 /**
  * Get the position of `I` (**number**)
  * @param I to query
@@ -298,7 +241,7 @@ type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? Iterati
  * type test1 = Pos<Next<i>> // 21
  * ```
  */
-type Pos<I extends Iteration> = I[0];
+export type Pos<I extends Iteration> = I[0];
 /**
  * Move `I`'s position forward
  * @param I to move
@@ -311,106 +254,4 @@ type Pos<I extends Iteration> = I[0];
  * type test1 = Pos<Next<i>> // 21
  * ```
  */
-type Next<I extends Iteration> = IterationMap[I[3]];
-
-/**
- * A [[List]]
- * @param T its type
- * @returns [[List]]
- * @example
- * ```ts
- * type list0 = [1, 2, 3]
- * type list1 = number[]
- * ```
- */
-type List<T = any> = readonly T[];
-/**
- * Get the length of `L`
- * @param L to get length
- * @returns [[String]] or `number`
- * @example
- * ```ts
- * ```
- */
-type Length<L extends List> = L['length'];
-/**
- * Return the last item out of a [[List]]
- * @param L
- * @returns [[List]]
- * @example
- * ```ts
- * ```
- */
-type Pop<L extends List> = L extends readonly [] ? never : L extends [...unknown[], infer Last] ? Last : L extends (infer T)[] ? T : never;
-
-/**
- * Ask TS to re-check that `A1` extends `A2`.
- * And if it fails, `A2` will be enforced anyway.
- * Can also be used to add constraints on parameters.
- * @param A1 to check against
- * @param A2 to cast to
- * @returns `A1 | A2`
- * @example
- * ```ts
- * type test0 = Cast<'42', string> // '42'
- * type test1 = Cast<'42', number> // number
- * ```
- */
-type Cast<A1, A2> = A1 extends A2 ? A1 : A2;
-/**
- * Check whether `A1` is part of `A2` or not. The difference with
- * `extends` is that it forces a [[Boolean]] return.
- * @param A1
- * @param A2
- * @returns [[Boolean]]
- * @example
- * ```ts
- * type test0 = Extends<'a' | 'b', 'b'> // Boolean
- * type test1 = Extends<'a', 'a' | 'b'> // True
- *
- * type test2 = Extends<{a: string}, {a: any}>      // True
- * type test3 = Extends<{a: any}, {a: any, b: any}> // False
- *
- * type test4 = Extends<never, never> // False
- * /// Nothing cannot extend nothing, use `Equals`
- * ```
- */
-type Extends<A1, A2> = [A1] extends [never] ? 0 : A1 extends A2 ? 1 : 0;
-type __Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>, I extends Iteration = IterationOf<0>> = Extends<Pos<I>, Length<Os>> extends 1 ? O : __Assign<MergeDeep<O, Os[Pos<I>]>, Os, Next<I>>;
-type _Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>> = __Assign<O, Os> extends infer X ? Cast<X, Record<string | number | symbol, unknown>> : never;
-/**
- * Assign a list of [[Object]] into `O` with [[MergeDeep]]. Merges from right to
- * left, first items get overridden by the next ones (last-in overrides).
- * @param O to assign to
- * @param Os to assign
- * @returns [[Object]]
- * @example
- * ```ts
- * ```
- */
-type Assign<O extends Record<string | number | symbol, unknown>, Os extends List<Record<string | number | symbol, unknown>>> = O extends unknown ? (Os extends unknown ? _Assign<O, Os> : never) : never;
-
-type Has<U, U1> = [U1] extends [U] ? 1 : 0;
-type If<B extends 0 | 1, Then, Else = never> = B extends 1 ? Then : Else;
-type PrettyPrint<A, Seen = never> = If<Has<Seen, A>, A, A extends Record<string | number | symbol, unknown> ? {
-    [K in keyof A]: PrettyPrint<A[K], A | Seen>;
-} & unknown : A>;
-
-/**
- * The return type of `merge()`. It reflects the type that is returned by JavaScript.
- *
- * This TS Utility can be used as standalone as well
- */
-type Merge<T, Ts extends unknown[]> = T extends Record<string | number | symbol, unknown> ? Ts extends Record<string | number | symbol, unknown>[] ? PrettyPrint<Assign<T, Ts>> : Pop<Ts> : Pop<Ts>;
-/**
- * Merge anything recursively.
- * Objects get merged, special objects (classes etc.) are re-assigned "as is".
- * Basic types overwrite objects or other basic types.
- */
-declare function merge<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
-declare function mergeAndCompare<T, Tn extends unknown[]>(compareFn: (prop1: any, prop2: any, propName: string | symbol) => any, object: T, ...otherObjects: Tn): Merge<T, Tn>;
-declare function mergeAndConcat<T, Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn>;
-
-declare function concatArrays(originVal: any, newVal: any): any | any[];
-
-export { Merge, concatArrays, merge, mergeAndCompare, mergeAndConcat };
+export type Next<I extends Iteration> = IterationMap[I[3]];
