@@ -20,11 +20,11 @@
     "is-what": "^5.2.0"
   },
   "devDependencies": {
-    "@cycraft/eslint": "^0.4.3",
+    "@cycraft/eslint": "^0.4.4",
     "@cycraft/tsconfig": "^0.1.2",
     "del-cli": "^6.0.0",
     "np": "^10.2.0",
-    "vitest": "^3.0.6"
+    "vitest": "^3.0.9"
   },
   "files": [
     "dist"
