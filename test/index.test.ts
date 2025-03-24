@@ -1,5 +1,5 @@
-import { test, expect } from 'vitest'
 import { isDate } from 'is-what'
+import { expect, test } from 'vitest'
 import { merge } from '../src/index'
 
 function copy<T>(any: T): T {
@@ -296,4 +296,34 @@ test('readme', () => {
     level: 16,
     is: 'cool',
   })
+})
+
+test('prototype pollution', () => {
+  // Test object with default permissions
+  const defaultPermissions = {
+    read: true,
+    write: false,
+    delete: false,
+  }
+
+  // Attempt prototype pollution through __proto__
+  const maliciousPayload = JSON.parse('{"__proto__": { "isAdmin": true }}')
+  const mergedPermissions = merge({}, defaultPermissions, maliciousPayload)
+
+  // Verify that prototype pollution was prevented
+  expect(mergedPermissions.isAdmin).toBeUndefined()
+  expect(Object.getPrototypeOf(mergedPermissions)).toBe(Object.prototype)
+
+  // Test with constructor and prototype properties
+  const maliciousPayload2 = {
+    constructor: { prototype: { isAdmin: true } },
+  }
+  const mergedPermissions2 = merge({}, defaultPermissions, maliciousPayload2)
+  expect((mergedPermissions2 as any).isAdmin).toBeUndefined()
+  expect(Object.getPrototypeOf(mergedPermissions2)).toBe(Object.prototype)
+
+  // Verify original properties are still intact
+  expect(mergedPermissions.read).toBe(true)
+  expect(mergedPermissions.write).toBe(false)
+  expect(mergedPermissions.delete).toBe(false)
 })

@@ -50,6 +50,8 @@ function mergeRecursively<T1, T2>(
     const symbols = Object.getOwnPropertySymbols(origin)
     newObject = [...props, ...symbols].reduce(
       (carry, key) => {
+        // Skip __proto__ properties to prevent prototype poisoning
+        if (key === '__proto__') return carry
         const targetVal = origin[key as string]
         if (
           (!isSymbol(key) && !Object.getOwnPropertyNames(newComer).includes(key)) ||
@@ -71,6 +73,8 @@ function mergeRecursively<T1, T2>(
   const props = Object.getOwnPropertyNames(newComer)
   const symbols = Object.getOwnPropertySymbols(newComer)
   const result = [...props, ...symbols].reduce((carry, key) => {
+    // Skip __proto__ properties to prevent prototype poisoning
+    if (key === '__proto__') return carry
     // re-define the origin and newComer as targetVal and newVal
     let newVal = newComer[key as string]
     const targetVal = isPlainObject(origin) ? origin[key as string] : undefined
@@ -91,9 +95,8 @@ function mergeRecursively<T1, T2>(
 }
 
 /**
- * Merge anything recursively.
- * Objects get merged, special objects (classes etc.) are re-assigned "as is".
- * Basic types overwrite objects or other basic types.
+ * Merge anything recursively. Objects get merged, special objects (classes etc.) are re-assigned
+ * "as is". Basic types overwrite objects or other basic types.
  */
 export function merge<T, const Tn extends unknown[]>(object: T, ...otherObjects: Tn): Merge<T, Tn> {
   return otherObjects.reduce((result, newComer) => {
