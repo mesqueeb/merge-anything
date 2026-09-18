@@ -20,7 +20,7 @@
     "is-what": "^5.5.0"
   },
   "devDependencies": {
-    "@cycraft/eslint": "^0.4.4",
+    "@cycraft/eslint": "^0.4.7",
     "@cycraft/tsconfig": "^0.1.2",
     "del-cli": "^7.0.0",
     "np": "^12.1.1",
