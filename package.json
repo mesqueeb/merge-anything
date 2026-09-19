@@ -14,7 +14,7 @@
     "lint": "tsc --noEmit && eslint ./src",
     "test": "vitest run",
     "build": "del-cli dist && tsc",
-    "release": "pnpm run lint && pnpm run build && np"
+    "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push && pnpm publish --no-git-checks && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes"
   },
   "dependencies": {
     "is-what": "^5.5.0"
@@ -22,8 +22,8 @@
   "devDependencies": {
     "@cycraft/eslint": "^0.4.7",
     "@cycraft/tsconfig": "^0.1.2",
+    "bumpp": "^12.3.0",
     "del-cli": "^7.0.0",
-    "np": "^12.1.1",
     "vitest": "^5.0.1"
   },
   "files": [
