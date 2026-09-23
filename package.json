@@ -14,7 +14,7 @@
     "lint": "tsc --noEmit && eslint ./src",
     "test": "vitest run",
     "build": "del-cli dist && tsc",
-    "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push && pnpm publish --no-git-checks && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes"
+    "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push && pnpm publish --no-git-checks && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
   },
   "dependencies": {
     "is-what": "^5.5.0"
