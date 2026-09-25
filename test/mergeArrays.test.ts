@@ -12,7 +12,7 @@ function mergeArrays(originVal: any, newVal: any): any | any[] {
       .concat(
         newVal.length > originVal.length
           ? originVal.slice(newVal.length)
-          : newVal.slice(originVal.length)
+          : newVal.slice(originVal.length),
       )
   }
   return newVal // always return newVal as fallback!!

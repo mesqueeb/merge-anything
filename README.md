@@ -194,7 +194,7 @@ const merged = copy(merge(original, extraInfo))
 merged.airport.status = 'lan. 🛬'(merged.airport.status === 'lan. 🛬')(
   // true
   // `original` won't be modified!
-  original.airport.status === 'dep. 🛫'
+  original.airport.status === 'dep. 🛫',
 ) // true
 ```
 
