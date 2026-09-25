@@ -1,6 +1,4 @@
-/**
- * An entry of `IterationMap`
- */
+/** An entry of `IterationMap` */
 export type Iteration = [
     value: number,
     sign: '-' | '0' | '+',
@@ -213,45 +211,50 @@ export type IterationMap = {
     '100': [100, '+', '99', '__', '-100'];
 };
 /**
- * Transform a number into an [[Iteration]]
- * (to use [[Prev]], [[Next]], & [[Pos]])
- * @param N to transform
- * @returns [[Iteration]]
+ * Transform a number into an [[Iteration]] (to use [[Prev]], [[Next]], & [[Pos]])
+ *
  * @example
- * ```ts
- * type i = IterationOf<0> // ["-1", "1", "0", 0, "0"]
+ *   ;```ts
+ *   type i = IterationOf<0> // ["-1", "1", "0", 0, "0"]
  *
- * type next = Next<i>       // ["0", "2", "1", 1, "+"]
- * type prev = Prev<i>       // ["-2", "0", "-1", -1, "-"]
+ *   type next = Next<i>       // ["0", "2", "1", 1, "+"]
+ *   type prev = Prev<i>       // ["-2", "0", "-1", -1, "-"]
  *
- * type nnext = Pos<next>    // +1
- * type nprev = Pos<prev>    // -1
- * ```
+ *   type nnext = Pos<next>    // +1
+ *   type nprev = Pos<prev>    // -1
+ *   ```
+ *
+ * @param N To transform
+ * @returns {undefined | undefined} Iteration
  */
 export type IterationOf<N extends number> = `${N}` extends keyof IterationMap ? IterationMap[`${N}`] : IterationMap['__'];
 /**
  * Get the position of `I` (**number**)
- * @param I to query
- * @returns `number`
- * @example
- * ```ts
- * type i = IterationOf<'20'>
  *
- * type test0 = Pos<i>         // 20
- * type test1 = Pos<Next<i>> // 21
- * ```
+ * @example
+ *   ;```ts
+ *   type i = IterationOf<'20'>
+ *
+ *   type test0 = Pos<i>         // 20
+ *   type test1 = Pos<Next<i>> // 21
+ *   ```
+ *
+ * @param I To query
+ * @returns `number`
  */
 export type Pos<I extends Iteration> = I[0];
 /**
  * Move `I`'s position forward
- * @param I to move
- * @returns [[Iteration]]
- * @example
- * ```ts
- * type i = IterationOf<'20'>
  *
- * type test0 = Pos<i>         // 20
- * type test1 = Pos<Next<i>> // 21
- * ```
+ * @example
+ *   ;```ts
+ *   type i = IterationOf<'20'>
+ *
+ *   type test0 = Pos<i>         // 20
+ *   type test1 = Pos<Next<i>> // 21
+ *   ```
+ *
+ * @param I To move
+ * @returns {undefined | undefined} Iteration
  */
 export type Next<I extends Iteration> = IterationMap[I[3]];

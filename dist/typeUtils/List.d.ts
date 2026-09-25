@@ -1,29 +1,35 @@
 /**
  * A [[List]]
- * @param T its type
- * @returns [[List]]
+ *
  * @example
- * ```ts
- * type list0 = [1, 2, 3]
- * type list1 = number[]
- * ```
+ *   ;```ts
+ *   type list0 = [1, 2, 3]
+ *   type list1 = number[]
+ *   ```
+ *
+ * @param T Its type
+ * @returns {undefined | undefined} List
  */
 export type List<T = unknown> = readonly T[];
 /**
  * Get the length of `L`
- * @param L to get length
- * @returns [[String]] or `number`
+ *
  * @example
- * ```ts
- * ```
+ *   ;```ts
+ *   ```
+ *
+ * @param L To get length
+ * @returns {undefined | undefined} String or `number`
  */
 export type Length<L extends List> = L['length'];
 /**
  * Return the last item out of a [[List]]
- * @param L
- * @returns [[List]]
+ *
  * @example
- * ```ts
- * ```
+ *   ;```ts
+ *   ```
+ *
+ * @param L
+ * @returns {undefined | undefined} List
  */
 export type Pop<L extends List> = L extends readonly [] ? never : L extends [...unknown[], infer Last] ? Last : L extends (infer T)[] ? T : never;
