@@ -227,7 +227,7 @@ export type IterationMap = {
  *   ```
  *
  * @param N To transform
- * @returns {undefined} [Iteration]
+ * @returns {undefined | undefined} Iteration
  */
 export type IterationOf<N extends number> = `${N}` extends keyof IterationMap
   ? IterationMap[`${N}`]
@@ -261,6 +261,6 @@ export type Pos<I extends Iteration> = I[0]
  *   ```
  *
  * @param I To move
- * @returns {undefined} [Iteration]
+ * @returns {undefined | undefined} Iteration
  */
 export type Next<I extends Iteration> = IterationMap[I[3]]

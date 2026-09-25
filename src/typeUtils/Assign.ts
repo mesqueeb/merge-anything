@@ -36,7 +36,7 @@ type Cast<A1, A2> = A1 extends A2 ? A1 : A2
  *
  * @param A1
  * @param A2
- * @returns {undefined} [Boolean]
+ * @returns {undefined | undefined} Boolean
  */
 type Extends<A1, A2> = [A1] extends [never] ? 0 : A1 extends A2 ? 1 : 0
 
@@ -61,7 +61,7 @@ type _Assign<
  *
  * @param O To assign to
  * @param Os To assign
- * @returns {undefined} [Object]
+ * @returns {undefined | undefined} Object
  */
 export type Assign<
   O extends Record<string | number | symbol, unknown>,

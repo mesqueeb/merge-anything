@@ -8,7 +8,7 @@
  *   ```
  *
  * @param T Its type
- * @returns {undefined} [List]
+ * @returns {undefined | undefined} List
  */
 export type List<T = unknown> = readonly T[]
 
@@ -20,7 +20,7 @@ export type List<T = unknown> = readonly T[]
  *   ```
  *
  * @param L To get length
- * @returns {undefined} [String] or `number`
+ * @returns {undefined | undefined} String or `number`
  */
 export type Length<L extends List> = L['length']
 
@@ -32,7 +32,7 @@ export type Length<L extends List> = L['length']
  *   ```
  *
  * @param L
- * @returns {undefined} [List]
+ * @returns {undefined | undefined} List
  */
 export type Pop<L extends List> = L extends readonly []
   ? never

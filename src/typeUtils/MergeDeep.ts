@@ -6,7 +6,7 @@
  *   ```
  *
  * @param O
- * @returns {undefined} [Key]
+ * @returns {undefined | undefined} Key
  */
 type OptionalKeys<O extends object> = O extends unknown
   ? {
@@ -23,7 +23,7 @@ type OptionalKeys<O extends object> = O extends unknown
  *   ```
  *
  * @param O
- * @returns {undefined} [Key]
+ * @returns {undefined | undefined} Key
  */
 type RequiredKeys<O extends object> = O extends unknown
   ? {
@@ -92,7 +92,7 @@ type MergeObjectsOrReturnFallback<O, O1, Fallback> =
  *
  * @param O To complete
  * @param O1 To copy from
- * @returns {undefined} [Object]
+ * @returns {undefined | undefined} Object
  */
 export type MergeDeep<
   O extends Record<string | number | symbol, unknown>,
