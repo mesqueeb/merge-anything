@@ -17,16 +17,16 @@
     "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push --all && pnpm publish --no-git-checks && npx jsr publish && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
   },
   "dependencies": {
-    "is-what": "^5.5.0"
+    "is-what": "^5.5.2"
   },
   "devDependencies": {
-    "@cycraft/eslint": "^0.4.7",
+    "@cycraft/eslint": "^0.4.11",
     "@cycraft/tsconfig": "^0.1.2",
     "bumpp": "^12.3.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.20.1",
     "typescript": "^5.9.3",
-    "vitest": "^5.0.1"
+    "vitest": "^5.0.2"
   },
   "files": [
     "dist"
@@ -62,5 +62,5 @@
   },
   "homepage": "https://github.com/mesqueeb/merge-anything#readme",
   "bugs": "https://github.com/mesqueeb/merge-anything/issues",
-  "packageManager": "pnpm@11.27.0"
+  "packageManager": "pnpm@11.28.0"
 }
