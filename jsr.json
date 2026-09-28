@@ -1,6 +1,6 @@
 {
   "name": "@mesqueeb/merge-anything",
-  "version": "6.0.7",
+  "version": "6.0.8",
   "license": "MIT",
   "exports": "./src/index.ts",
   "publish": {
