@@ -17,7 +17,7 @@
     "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push --all && pnpm publish --no-git-checks && jsr publish ${JSR_TOKEN:+--token $JSR_TOKEN} && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
   },
   "dependencies": {
-    "is-what": "^5.5.2"
+    "is-what": "^5.5.6"
   },
   "devDependencies": {
     "@cycraft/eslint": "^0.4.11",

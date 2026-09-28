@@ -19,8 +19,8 @@ importers:
   .:
     dependencies:
       is-what:
-        specifier: ^5.5.2
-        version: 5.5.2
+        specifier: ^5.5.6
+        version: 5.5.6
     devDependencies:
       '@cycraft/eslint':
         specifier: ^0.4.11
@@ -653,8 +653,8 @@ packages:
     resolution: {integrity: sha512-lJJV/5dYS+RcL8uQdBDW9c9uWFLLBNRyFhnAKXw5tVqLlKZ4RMGZKv+YQ/IA3OhD+RpbJa1LLFM1FQPGyIXvOA==}
     engines: {node: '>=12'}
 
-  is-what@5.5.2:
-    resolution: {integrity: sha512-NDfDavd2HaG0N/DC/5yQ7q7nrITMgDdrdNk5Y0+8t0u0tTdVdukTiECj/JNXrMhnlIoJGQHZmN7vHuXe0yA5Ig==}
+  is-what@5.5.6:
+    resolution: {integrity: sha512-pqcuDo0zxIlI8D/fwskPl8p3pC7EKXv/7ZjtMBCWU7tSpPDFjY+FR52QYrKHhgRdbZK4iQ1y2KtHypozhR4FHw==}
     engines: {node: '>=18'}
 
   isexe@2.0.0:
@@ -1780,7 +1780,7 @@ snapshots:
 
   is-path-inside@4.0.0: {}
 
-  is-what@5.5.2: {}
+  is-what@5.5.6: {}
 
   isexe@2.0.0: {}
 
