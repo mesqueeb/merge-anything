@@ -17,17 +17,17 @@
     "release": "pnpm run lint && pnpm run build && pnpm test && bumpp --no-push --all && pnpm publish --no-git-checks && jsr publish ${JSR_TOKEN:+--token $JSR_TOKEN} && git push --follow-tags && gh release create $(git describe --tags --abbrev=0) --generate-notes --notes \"$(git log --pretty='- %s  %h' $(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)..HEAD~1)\""
   },
   "dependencies": {
-    "is-what": "^5.5.7"
+    "is-what": "5.5.7"
   },
   "devDependencies": {
-    "@cycraft/eslint": "^0.4.11",
-    "@cycraft/tsconfig": "^0.1.2",
-    "bumpp": "^12.3.0",
-    "del-cli": "^7.0.0",
-    "eslint": "^9.20.1",
-    "jsr": "^0.14.3",
-    "typescript": "^5.9.3",
-    "vitest": "^5.0.3"
+    "@cycraft/eslint": "0.4.11",
+    "@cycraft/tsconfig": "0.1.2",
+    "bumpp": "12.3.0",
+    "del-cli": "7.0.0",
+    "eslint": "9.20.1",
+    "jsr": "0.14.3",
+    "typescript": "5.9.3",
+    "vitest": "5.0.3"
   },
   "files": [
     "dist"
