@@ -10,11 +10,13 @@ import type { PrettyPrint } from './typeUtils/PrettyPrint.js'
  * This TS Utility can be used as standalone as well
  */
 export type Merge<T, Ts extends unknown[]> =
-  T extends Record<string | number | symbol, unknown>
-    ? Ts extends Record<string | number | symbol, unknown>[]
-      ? PrettyPrint<Assign<T, Ts>>
+  Ts extends readonly []
+    ? T
+    : T extends Record<string | number | symbol, unknown>
+      ? Ts extends Record<string | number | symbol, unknown>[]
+        ? PrettyPrint<Assign<T, Ts>>
+        : Pop<Ts>
       : Pop<Ts>
-    : Pop<Ts>
 
 function assignProp(
   carry: Record<string | number | symbol, unknown>,

@@ -6,7 +6,7 @@ import type { PrettyPrint } from './typeUtils/PrettyPrint.js';
  *
  * This TS Utility can be used as standalone as well
  */
-export type Merge<T, Ts extends unknown[]> = T extends Record<string | number | symbol, unknown> ? Ts extends Record<string | number | symbol, unknown>[] ? PrettyPrint<Assign<T, Ts>> : Pop<Ts> : Pop<Ts>;
+export type Merge<T, Ts extends unknown[]> = Ts extends readonly [] ? T : T extends Record<string | number | symbol, unknown> ? Ts extends Record<string | number | symbol, unknown>[] ? PrettyPrint<Assign<T, Ts>> : Pop<Ts> : Pop<Ts>;
 /**
  * Merge anything recursively. Objects get merged, special objects (classes etc.) are re-assigned
  * "as is". Basic types overwrite objects or other basic types.
