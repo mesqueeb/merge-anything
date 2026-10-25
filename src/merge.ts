@@ -4,11 +4,17 @@ import type { Assign } from './typeUtils/Assign.js'
 import type { Pop } from './typeUtils/List.js'
 import type { PrettyPrint } from './typeUtils/PrettyPrint.js'
 
-/**
- * The return type of `merge()`. It reflects the type that is returned by JavaScript.
- *
- * This TS Utility can be used as standalone as well
- */
+/** Plain Object.prototype objects and null-prototype bags (Object.create(null), qs). */
+function isMergeableObject(payload: unknown): payload is Record<string | number | symbol, unknown> {
+  if (isPlainObject(payload)) return true
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    !Array.isArray(payload) &&
+    Object.getPrototypeOf(payload) === null
+  )
+}
+
 export type Merge<T, Ts extends unknown[]> =
   T extends Record<string | number | symbol, unknown>
     ? Ts extends Record<string | number | symbol, unknown>[]
@@ -42,10 +48,10 @@ function mergeRecursively<T1, T2>(
   compareFn?: (prop1: T1[keyof T1], prop2: T2[keyof T2], propName: keyof T1) => any,
 ): (T1 & T2) | T2 {
   // always return newComer if its not an object
-  if (!isPlainObject(newComer)) return newComer
+  if (!isMergeableObject(newComer)) return newComer
   // define newObject to merge all values upon
   let newObject = {} as (T1 & T2) | T2
-  if (isPlainObject(origin)) {
+  if (isMergeableObject(origin)) {
     const props = Object.getOwnPropertyNames(origin)
     const symbols = Object.getOwnPropertySymbols(origin)
     newObject = [...props, ...symbols].reduce(
@@ -77,9 +83,9 @@ function mergeRecursively<T1, T2>(
     if (key === '__proto__') return carry
     // re-define the origin and newComer as targetVal and newVal
     let newVal = newComer[key as string]
-    const targetVal = isPlainObject(origin) ? origin[key as string] : undefined
+    const targetVal = isMergeableObject(origin) ? origin[key as string] : undefined
     // When newVal is an object do the merge recursively
-    if (targetVal !== undefined && isPlainObject(newVal)) {
+    if (targetVal !== undefined && isMergeableObject(newVal)) {
       newVal = mergeRecursively(targetVal as any, newVal as any, compareFn)
     }
     const propToAssign = compareFn ? compareFn(targetVal as any, newVal as any, key as any) : newVal

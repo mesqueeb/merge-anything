@@ -327,3 +327,14 @@ test('prototype pollution', () => {
   expect(mergedPermissions.write).toBe(false)
   expect(mergedPermissions.delete).toBe(false)
 })
+
+test('null-prototype objects merge like plain objects (#48)', () => {
+  const origin = { y: 1 }
+  const nullProto = Object.create(null) as { x: number }
+  nullProto.x = 1
+  expect(merge(origin, nullProto)).toEqual({ y: 1, x: 1 })
+  expect(merge(nullProto, origin)).toEqual({ x: 1, y: 1 })
+  const nested = Object.create(null) as { nested: { b: number } }
+  nested.nested = { b: 2 }
+  expect(merge({ nested: { a: 1 } }, nested)).toEqual({ nested: { a: 1, b: 2 } })
+})
